@@ -16,6 +16,7 @@ export async function onRequestGet({ env, data }) {
       turnstile: turnstileEnabled(env),
       access: !!data.accessUser,
     },
+    accessUser: data.accessUser,
     failures24h: fails ? fails.n : 0,
     sessions: sessions.results.map((s) => ({ ...s, id: s.id.slice(0, 12), current: s.id === data.session.id })),
     log: log.results,

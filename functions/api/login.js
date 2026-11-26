@@ -12,7 +12,7 @@ const minutes = (s) => Math.max(1, Math.ceil(s / 60));
 // Same response time for every failure, so timing doesn't tell a bot which check failed
 const slow = () => new Promise((r) => setTimeout(r, 400 + Math.random() * 400));
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, data }) {
   const missing = needBindings(env, "DB");
   if (missing) return missing;
   if (!secretsOk(env)) return fail(503, "Defina os segredos ADMIN_PASSWORD (12+ caracteres) e SESSION_SECRET (32+ caracteres) no Cloudflare.");
@@ -49,6 +49,6 @@ export async function onRequestPost({ request, env }) {
 
   await clearFailures(env, ip);
   const token = await createSession(env, request);
-  await audit(env, request, "login_ok", totpEnabled(env) ? "senha + 2 fatores" : "senha");
+  await audit(env, request, "login_ok", (totpEnabled(env) ? "senha + 2 fatores" : "senha") + (data.accessUser ? " · Access: " + data.accessUser : ""));
   return json({ ok: true }, 200, { "set-cookie": sessionCookie(request, token) });
 }

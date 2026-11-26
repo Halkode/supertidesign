@@ -1043,7 +1043,7 @@ function viewSecurity() {
         item(true, "Barreira contra robôs", "Campo invisível (honeypot) e tempo mínimo de preenchimento do formulário."),
         item(p.totp, "Verificação em 2 etapas", p.totp ? "Ativa: o login pede o código do app autenticador." : "Desligada. Recomendado: configure ADMIN_TOTP_SECRET (veja o README)."),
         item(p.turnstile, "Cloudflare Turnstile", p.turnstile ? "Ativo: verificação anti-robô no login." : "Opcional: verificação anti-robô gratuita da Cloudflare (veja o README)."),
-        item(p.access, "Cloudflare Access", p.access ? "Ativo: só e-mails autorizados chegam ao painel." : "Opcional: exige login por e-mail da Cloudflare antes mesmo da senha (veja o README).")),
+        item(p.access, "Cloudflare Access", p.access ? `Ativo e conferido pelo servidor: você entrou como ${d.accessUser}.` : "Opcional: exige login por e-mail da Cloudflare antes mesmo da senha (veja o README).")),
         h("p", { class: d.failures24h > 10 ? "error" : "muted" }, `${d.failures24h} tentativa(s) recusada(s) nas últimas 24 h.`)),
       card("Onde o painel está aberto",
         h("ul", { class: "sessions" }, d.sessions.map((s) => h("li", {},

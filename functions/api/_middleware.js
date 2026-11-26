@@ -2,15 +2,21 @@
 // The session row is passed on as context.data.session.
 import { getSession, sameOrigin, secretsOk } from "../../server/auth.js";
 import { fail } from "../../server/http.js";
+import { accessEnabled, verifyAccess } from "../../server/access.js";
 
 const PUBLIC = new Set(["/api/login", "/api/session"]);
 
 export async function onRequest({ request, env, next, data }) {
   const path = new URL(request.url).pathname.replace(/\/$/, "");
   if (request.method !== "GET" && request.method !== "HEAD" && !sameOrigin(request)) return fail(403, "Origem não permitida.");
+  // Cloudflare Access (when configured): every API call, login included, needs a valid Access token
+  data.accessUser = null;
+  if (accessEnabled(env)) {
+    const a = await verifyAccess(request, env);
+    if (a.error) return fail(403, "Acesso negado pelo Cloudflare Access (" + a.error + "). Recarregue a página do painel.");
+    data.accessUser = a.email;
+  }
   data.session = await getSession(env, request);
-  // Set by Cloudflare Access when it protects /admin and /api (shown in the Security tab only)
-  data.accessUser = request.headers.get("cf-access-authenticated-user-email") || null;
   if (!PUBLIC.has(path)) {
     if (!secretsOk(env)) return fail(503, "Defina os segredos ADMIN_PASSWORD (12+ caracteres) e SESSION_SECRET (32+ caracteres) no Cloudflare.");
     if (!data.session) return fail(401, "Faça login.");

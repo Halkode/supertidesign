@@ -67,8 +67,21 @@ Proteções que estão sempre ligadas:
 Camadas opcionais, da mais simples para a mais forte:
 
 1. **Verificação em 2 etapas (recomendado).** Rode `node scripts/totp-setup.mjs`. Adicione a CHAVE no app autenticador do celular (Google Authenticator, Microsoft Authenticator, Authy…) e crie o segredo `ADMIN_TOTP_SECRET` com ela no Cloudflare. A partir daí o login pede o código de 6 dígitos, e cada código só vale uma vez. Guarde a chave num lugar seguro: ela é o backup se o celular for perdido.
-2. **Cloudflare Turnstile.** É um captcha gratuito e quase sempre invisível. Em *Cloudflare → Turnstile → Add widget*, cadastre o domínio do site. Depois crie a variável `TURNSTILE_SITE_KEY` e o segredo `TURNSTILE_SECRET` no projeto do Pages.
-3. **Cloudflare Access (Zero Trust, grátis até 50 pessoas).** Em *Zero Trust → Access → Applications → Self-hosted*, proteja os caminhos `/admin` e `/api` do domínio, com uma política que permita só o e-mail do Guilherme. Quem não estiver autorizado nem chega à tela de senha, porque o Access pede um código enviado ao e-mail antes. O painel continua pedindo a senha (e o código de 2 etapas) depois disso. A aba **Segurança** mostra quando o Access está ativo.
+2. **Cloudflare Turnstile** (captcha gratuito, quase sempre invisível).
+   1. Em *Cloudflare → Turnstile → Add widget*, dê um nome e cadastre os hostnames do site (o `*.pages.dev` e o domínio próprio, se houver). Escolha o modo *Managed*.
+   2. No projeto do Pages, em *Settings → Variables and Secrets*, crie dois **Secrets** (Production e Preview): `TURNSTILE_SITE_KEY` com a Site Key e `TURNSTILE_SECRET` com a Secret Key.
+   3. Faça um novo deploy. A caixinha da Cloudflare aparece no login.
+
+   Se o hostname do widget estiver errado, ninguém consegue entrar. Para resolver, corrija o widget ou apague os dois segredos e faça um novo deploy.
+3. **Cloudflare Access** (Zero Trust, grátis até 50 pessoas).
+   1. No painel da Cloudflare, abra *Zero Trust*, escolha o nome da equipe (por exemplo, `supertidesign`) e o plano Free. Em *Settings → Authentication*, deixe o **One-time PIN** ativo (código por e-mail).
+   2. Em *Access → Applications → Add an application → Self-hosted*, crie uma aplicação com os destinos `SEU-DOMÍNIO/admin` e `SEU-DOMÍNIO/api`. Não proteja `/` nem `/media`, que são o site público. Adicione uma política **Allow** com *Include → Emails*: o e-mail do Guilherme e o de quem dá manutenção.
+   3. **Proteja também as URLs de preview.** Em *Pages → Settings → General → Access policy*, clique em *Enable*. Os previews usam o mesmo banco de dados.
+   4. **Ligue a conferência no servidor.** Copie o *Application Audience (AUD) Tag* da aplicação, que fica em *Overview* / *Basic information*. No projeto do Pages, crie as variáveis `ACCESS_TEAM_DOMAIN` (ex.: `supertidesign.cloudflareaccess.com`) e `ACCESS_AUD` (a tag). Faça um novo deploy.
+
+   Com isso, além do bloqueio que o Access faz na borda da Cloudflare, o próprio servidor confere a assinatura do token do Access (RS256, chaves da equipe, audiência, emissor e validade). Qualquer pedido a `/admin` ou `/api` sem token válido é recusado, mesmo que chegue por um endereço esquecido fora da regra. A aba **Segurança** mostra o e-mail que o Access confirmou.
+
+   Configure o passo 4 **só depois** dos passos 1 a 3 funcionarem. Antes disso o painel recusaria todo mundo, porque ainda não haveria token. Se isso acontecer, apague as duas variáveis e faça um novo deploy.
 
 Se a senha vazar: troque `ADMIN_PASSWORD` no Cloudflare e use **Segurança → Sair de todos os outros aparelhos**. Trocar `SESSION_SECRET` derruba todas as sessões de uma vez.
 
