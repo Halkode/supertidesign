@@ -1110,11 +1110,13 @@ function normalize(d) {
 // Login: every time the form is shown it gets a fresh form token from /api/session (the server
 // refuses logins sent without one, or less than 2 s after it was issued — typical of bots).
 const LOGIN = { form: null, turnstile: null, widget: null };
+// (checks for .render: an element with id="turnstile" would also show up as window.turnstile)
+const turnstileApi = () => (window.turnstile && typeof window.turnstile.render === "function" ? window.turnstile : null);
 function loadTurnstile() {
-  if (window.turnstile) return Promise.resolve(window.turnstile);
+  if (turnstileApi()) return Promise.resolve(turnstileApi());
   return new Promise((resolve, reject) => {
     const s = h("script", { src: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit", async: true });
-    s.onload = () => resolve(window.turnstile); s.onerror = () => reject(new Error("Não foi possível carregar a verificação anti-robô."));
+    s.onload = () => (turnstileApi() ? resolve(turnstileApi()) : reject(new Error("Não foi possível carregar a verificação anti-robô."))); s.onerror = () => reject(new Error("Não foi possível carregar a verificação anti-robô."));
     document.head.append(s);
   });
 }
@@ -1131,7 +1133,7 @@ async function showLogin(msg, sess) {
       const ts = await loadTurnstile();
       LOGIN.turnstile = null;
       if (LOGIN.widget != null) ts.reset(LOGIN.widget);
-      else LOGIN.widget = ts.render("#turnstile", { sitekey: s.turnstileSiteKey, language: "pt-br", callback: (t) => { LOGIN.turnstile = t; }, "expired-callback": () => { LOGIN.turnstile = null; } });
+      else LOGIN.widget = ts.render("#turnstile-box", { sitekey: s.turnstileSiteKey, language: "pt-br", callback: (t) => { LOGIN.turnstile = t; }, "expired-callback": () => { LOGIN.turnstile = null; } });
     }
   } catch (e) { $("#login-err").textContent = e.message; }
   setTimeout(() => $("#pw").focus(), 30);
