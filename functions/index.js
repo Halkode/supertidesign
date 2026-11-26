@@ -3,6 +3,13 @@
 import { finalize } from "../server/site.js";
 import { ASSET_V } from "../server/version.js";
 
+const SECURITY = {
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "strict-transport-security": "max-age=31536000; includeSubDomains",
+  "x-frame-options": "SAMEORIGIN",
+};
+
 export async function onRequestGet({ env, request, next }) {
   if (!env.DB) return next();
   let row;
@@ -13,7 +20,7 @@ export async function onRequestGet({ env, request, next }) {
   }
   if (!row) return next();
   const etag = `"v${row.id}-${ASSET_V}"`;
-  const headers = { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache", etag, "x-content-type-options": "nosniff" };
+  const headers = { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache", etag, ...SECURITY };
   if (request.headers.get("if-none-match") === etag) return new Response(null, { status: 304, headers });
   return new Response(finalize(row.html), { headers });
 }

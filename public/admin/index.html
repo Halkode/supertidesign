@@ -19,9 +19,20 @@
     <img src="/assets/brand/logo.svg" alt="" width="56" height="56">
     <h1>Painel do site</h1>
     <p class="muted" id="login-msg">Digite a senha para editar o site.</p>
+    <input type="text" name="username" autocomplete="username" value="admin" hidden>
     <label for="pw">Senha</label>
     <input id="pw" type="password" autocomplete="current-password" required>
-    <button class="btn primary" type="submit">Entrar</button>
+    <div class="totp-field" id="totp-field" hidden>
+      <label for="code">Código de 6 dígitos do app autenticador</label>
+      <input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="000000">
+    </div>
+    <!-- Honeypot: invisible to people (and skipped by keyboard/screen readers); bots fill it -->
+    <div class="hp" aria-hidden="true">
+      <label for="website">Seu site</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
+    <div id="turnstile"></div>
+    <button class="btn primary" type="submit" id="login-btn">Entrar</button>
     <p class="error" id="login-err" role="alert"></p>
   </form>
 </section>

@@ -26,7 +26,7 @@ Visitante ── GET / ──▶ functions/index.js ─┘  (sem versão publica
 
 - **D1** (SQLite da Cloudflare) guarda o rascunho, as versões publicadas (até 60, para restaurar) e a lista de arquivos enviados.
 - **R2** guarda os arquivos enviados. O painel converte as fotos para WebP no próprio navegador, em dois tamanhos: até 1800 px e 800 px.
-- **Login**: uma senha (`ADMIN_PASSWORD`) e um cookie de sessão assinado (`SESSION_SECRET`). Há limite de tentativas por IP.
+- **Login**: senha, verificação em 2 etapas (opcional) e várias barreiras contra robôs. Os detalhes estão em [Segurança do painel](#segurança-do-painel).
 
 ## Configurar no Cloudflare (uma vez)
 
@@ -43,12 +43,34 @@ npm run db:remote                            # cria as tabelas (schema.sql)
 Depois, no painel da Cloudflare:
 
 1. **Pages → projeto do site → Settings → Variables and Secrets.** Crie dois segredos para *Production* e *Preview*:
-   - `ADMIN_PASSWORD`: a senha do painel, com 8 caracteres ou mais;
+   - `ADMIN_PASSWORD`: a senha do painel, com **12 caracteres ou mais** (uma frase é mais fácil de lembrar e mais forte);
    - `SESSION_SECRET`: um texto aleatório de 32 caracteres ou mais. Para gerar um: `node -e "console.log(crypto.randomBytes(32).toString('hex'))"`.
 2. **Build:** se o projeto estiver ligado ao GitHub, não precisa de comando de build. A pasta publicada (`public`) e as ligações com D1 e R2 já vêm do `wrangler.toml`.
 3. Faça o deploy, abra `https://SEU-SITE/admin` e entre com a senha.
+4. **Recomendado:** ative a verificação em 2 etapas. Os passos estão logo abaixo.
 
 Sem o D1 configurado, o site continua no ar com a versão estática. Só o painel avisa que falta configuração.
+
+## Segurança do painel
+
+Proteções que estão sempre ligadas:
+
+| Proteção | Como funciona |
+|---|---|
+| Bloqueio de tentativas | Depois de 5 erros, o IP fica bloqueado 15 min. O tempo dobra a cada nova falha, até 24 h. Com mais de 20 erros na última hora (somando todos os IPs), o limite cai para 2. Todas as recusas mostram a mesma mensagem e demoram o mesmo tempo, então um robô não descobre qual verificação falhou. |
+| Honeypot | Um campo invisível no formulário. Pessoas não o veem; robôs o preenchem e o IP é bloqueado na hora. |
+| Token de formulário | O login só é aceito com um token emitido quando a página de login abre, e só depois de 2 s. Isso barra robôs que mandam o login direto para a API ou rápido demais. |
+| Sessões no servidor | O cookie é `HttpOnly`, `Secure`, `SameSite=Strict` e `__Host-`. No banco fica só o HMAC do token. "Sair" apaga a sessão de verdade. A sessão expira após 12 h sem uso ou 7 dias no total. A aba **Segurança** mostra os aparelhos conectados e encerra sessões. |
+| Registro de acessos | Logins, recusas, bloqueios, publicações, uploads e restaurações ficam registrados com IP, país e navegador, por 90 dias. Aparecem na aba **Segurança**. |
+| CSRF e cabeçalhos | Toda alteração precisa vir da mesma origem. O painel tem CSP, `frame-ancestors`, `noindex` e HSTS. As mídias enviadas são servidas com `sandbox`, então um SVG não executa scripts. |
+
+Camadas opcionais, da mais simples para a mais forte:
+
+1. **Verificação em 2 etapas (recomendado).** Rode `node scripts/totp-setup.mjs`. Adicione a CHAVE no app autenticador do celular (Google Authenticator, Microsoft Authenticator, Authy…) e crie o segredo `ADMIN_TOTP_SECRET` com ela no Cloudflare. A partir daí o login pede o código de 6 dígitos, e cada código só vale uma vez. Guarde a chave num lugar seguro: ela é o backup se o celular for perdido.
+2. **Cloudflare Turnstile.** É um captcha gratuito e quase sempre invisível. Em *Cloudflare → Turnstile → Add widget*, cadastre o domínio do site. Depois crie a variável `TURNSTILE_SITE_KEY` e o segredo `TURNSTILE_SECRET` no projeto do Pages.
+3. **Cloudflare Access (Zero Trust, grátis até 50 pessoas).** Em *Zero Trust → Access → Applications → Self-hosted*, proteja os caminhos `/admin` e `/api` do domínio, com uma política que permita só o e-mail do Guilherme. Quem não estiver autorizado nem chega à tela de senha, porque o Access pede um código enviado ao e-mail antes. O painel continua pedindo a senha (e o código de 2 etapas) depois disso. A aba **Segurança** mostra quando o Access está ativo.
+
+Se a senha vazar: troque `ADMIN_PASSWORD` no Cloudflare e use **Segurança → Sair de todos os outros aparelhos**. Trocar `SESSION_SECRET` derruba todas as sessões de uma vez.
 
 ## Rodar localmente
 
@@ -110,6 +132,7 @@ functions/              Pages Functions: GET /, /media/*, /api/* (login, conteú
 server/                 código compartilhado das Functions (auth, acesso ao D1, versão dos assets)
 content/default.json    conteúdo original (ponto de partida do painel)
 schema.sql              tabelas do D1
+scripts/totp-setup.mjs  gera a chave da verificação em 2 etapas
 wrangler.toml           configuração do Cloudflare (D1, R2, pasta public)
 build.mjs               gera public/index.html e server/version.js
 ```

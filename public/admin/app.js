@@ -522,6 +522,7 @@ const VIEWS = [
   ["contact", "Contato e SEO", "✉"],
   ["media", "Mídia", "📁"],
   ["history", "Histórico", "🕓"],
+  ["security", "Segurança", "🔒"],
 ];
 
 function renderNav() {
@@ -539,7 +540,7 @@ function renderView(top = false) {
   const ed = $("#editor");
   const y = ed.scrollTop;
   const fn = { home: viewHome, colors: viewColors, fonts: viewFonts, motion: viewMotion, texts: viewTexts, hero: viewHero, about: viewAbout,
-    works: viewWorks, more: viewMore, galleries: viewGalleries, skills: viewSkills, contact: viewContact, media: viewMedia, history: viewHistory }[S.view] || viewHome;
+    works: viewWorks, more: viewMore, galleries: viewGalleries, skills: viewSkills, contact: viewContact, media: viewMedia, history: viewHistory, security: viewSecurity }[S.view] || viewHome;
   ed.replaceChildren(fn());
   ed.scrollTop = top ? 0 : y;
   if (top) ed.focus({ preventScroll: true });
@@ -558,7 +559,7 @@ function viewHome() {
         h("button", { class: "btn primary", onclick: publish }, "Publicar agora"),
         h("a", { class: "btn ghost", href: "/", target: "_blank", rel: "noopener" }, "Abrir o site ↗"))),
     card("Atalhos",
-      h("div", { class: "shortcuts" }, VIEWS.slice(1, -2).map(([k, l, ic]) => h("button", { class: "shortcut", onclick: () => go(k) }, h("span", { class: "ic", "aria-hidden": "true" }, ic), l)))),
+      h("div", { class: "shortcuts" }, VIEWS.slice(1, -3).map(([k, l, ic]) => h("button", { class: "shortcut", onclick: () => go(k) }, h("span", { class: "ic", "aria-hidden": "true" }, ic), l)))),
     card("Cópia de segurança",
       h("p", { class: "muted" }, "Baixe todo o conteúdo (textos, configurações e a lista de imagens) em um arquivo. Dá para importar de volta depois."),
       h("div", { class: "row" },
@@ -1019,6 +1020,54 @@ function viewHistory() {
   return h("div", {}, intro("Histórico", "Cada publicação vira uma versão. Você pode ver qualquer uma e trazê-la de volta para o rascunho."), card(null, box));
 }
 
+/* ---------------------------------------------------------------- security */
+const EVENTS = {
+  login_ok: ["Entrou", "good"], login_fail: ["Login recusado", "bad"], login_blocked: ["Tentativa com IP bloqueado", "bad"],
+  honeypot: ["Robô barrado", "bad"], logout: ["Saiu", ""], sessions_revoked: ["Sessões encerradas", ""],
+  publish: ["Publicou", "good"], restore: ["Restaurou versão", ""], upload: ["Enviou arquivo", ""], media_delete: ["Apagou arquivo", ""],
+};
+function device(ua = "") {
+  const b = /Edg\//.test(ua) ? "Edge" : /OPR\//.test(ua) ? "Opera" : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Navegador";
+  const o = /iPhone|iPad/.test(ua) ? "iPhone/iPad" : /Android/.test(ua) ? "Android" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "";
+  return o ? `${b} no ${o}` : b;
+}
+function viewSecurity() {
+  const box = h("div", {}, h("p", { class: "muted" }, "Carregando…"));
+  const when = (t) => new Date(t * 1000).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const load = () => api("security").then((d) => {
+    const p = d.protections;
+    const item = (on, title, text) => h("li", { class: on ? "on" : "off" }, h("span", { class: "ic", "aria-hidden": "true" }, on ? "✓" : "!"), h("div", {}, h("b", {}, title), h("p", { class: "hint" }, text)));
+    box.replaceChildren(
+      card("Proteções", h("ul", { class: "sec-status" },
+        item(true, "Senha + bloqueio de tentativas", "Depois de 5 erros, o IP fica bloqueado 15 min (dobra a cada nova falha, até 24 h). Com muitos erros no geral, o limite cai para 2."),
+        item(true, "Barreira contra robôs", "Campo invisível (honeypot) e tempo mínimo de preenchimento do formulário."),
+        item(p.totp, "Verificação em 2 etapas", p.totp ? "Ativa: o login pede o código do app autenticador." : "Desligada. Recomendado: configure ADMIN_TOTP_SECRET (veja o README)."),
+        item(p.turnstile, "Cloudflare Turnstile", p.turnstile ? "Ativo: verificação anti-robô no login." : "Opcional: verificação anti-robô gratuita da Cloudflare (veja o README)."),
+        item(p.access, "Cloudflare Access", p.access ? "Ativo: só e-mails autorizados chegam ao painel." : "Opcional: exige login por e-mail da Cloudflare antes mesmo da senha (veja o README).")),
+        h("p", { class: d.failures24h > 10 ? "error" : "muted" }, `${d.failures24h} tentativa(s) recusada(s) nas últimas 24 h.`)),
+      card("Onde o painel está aberto",
+        h("ul", { class: "sessions" }, d.sessions.map((s) => h("li", {},
+          h("div", {}, h("b", {}, device(s.ua)), s.current ? h("span", { class: "badge" }, "este aparelho") : null,
+            h("br"), h("small", {}, `${s.ip}${s.country ? " · " + s.country : ""} · entrou ${when(s.created_at)} · ativo ${when(s.last_seen)}`)),
+          s.current ? null : h("button", { class: "btn sm ghost", onclick: async () => {
+            try { await api("security?session=" + encodeURIComponent(s.id), { method: "DELETE" }); toast("Sessão encerrada."); load(); } catch (e) { toast(e.message, "error"); }
+          } }, "Encerrar")))),
+        d.sessions.length > 1 ? h("button", { class: "btn danger", onclick: async () => {
+          if (!(await confirmBox("Sair dos outros aparelhos", "Todos os outros aparelhos vão precisar entrar de novo.", "Encerrar", true))) return;
+          try { await api("security?all=1", { method: "DELETE" }); toast("Outras sessões encerradas."); load(); } catch (e) { toast(e.message, "error"); }
+        } }, "Sair de todos os outros aparelhos") : null,
+        h("p", { class: "hint" }, "Se suspeitar que a senha vazou: troque ADMIN_PASSWORD no Cloudflare e encerre as outras sessões (o botão aparece quando há mais de um aparelho). Trocar SESSION_SECRET derruba todas as sessões, inclusive esta.")),
+      card("Registro de acessos (últimos 150)",
+        d.log.length ? h("ol", { class: "audit" }, d.log.map((l) => {
+          const [label, cls] = EVENTS[l.event] || [l.event, ""];
+          return h("li", {}, h("small", {}, when(l.at)), h("span", { class: "ev " + cls }, label),
+            h("span", {}, l.detail ? l.detail + " · " : "", h("small", {}, `${l.ip}${l.country ? " (" + l.country + ")" : ""} · ${device(l.ua)}`)));
+        })) : h("p", { class: "muted" }, "Nada registrado ainda.")));
+  }).catch((e) => box.replaceChildren(h("p", { class: "error" }, e.message)));
+  load();
+  return h("div", {}, intro("Segurança", "Quem entrou, de onde, e o que está protegendo o painel."), box);
+}
+
 /* ================================================================== publish */
 async function publish() {
   const id = nid();
@@ -1058,20 +1107,52 @@ function normalize(d) {
 }
 
 /* ================================================================== boot */
-function showLogin(msg) {
+// Login: every time the form is shown it gets a fresh form token from /api/session (the server
+// refuses logins sent without one, or less than 2 s after it was issued — typical of bots).
+const LOGIN = { form: null, turnstile: null, widget: null };
+function loadTurnstile() {
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  return new Promise((resolve, reject) => {
+    const s = h("script", { src: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit", async: true });
+    s.onload = () => resolve(window.turnstile); s.onerror = () => reject(new Error("Não foi possível carregar a verificação anti-robô."));
+    document.head.append(s);
+  });
+}
+async function showLogin(msg, sess) {
   $("#app").hidden = true;
   $("#login").hidden = false;
   if (msg) $("#login-msg").textContent = msg;
+  try {
+    const s = sess || await api("session");
+    LOGIN.form = s.form;
+    $("#totp-field").hidden = !s.totp;
+    $("#code").required = !!s.totp;
+    if (s.turnstileSiteKey) {
+      const ts = await loadTurnstile();
+      LOGIN.turnstile = null;
+      if (LOGIN.widget != null) ts.reset(LOGIN.widget);
+      else LOGIN.widget = ts.render("#turnstile", { sitekey: s.turnstileSiteKey, language: "pt-br", callback: (t) => { LOGIN.turnstile = t; }, "expired-callback": () => { LOGIN.turnstile = null; } });
+    }
+  } catch (e) { $("#login-err").textContent = e.message; }
   setTimeout(() => $("#pw").focus(), 30);
 }
 $("#login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
+  const btn = $("#login-btn");
   $("#login-err").textContent = "";
+  btn.disabled = true;
   try {
-    await api("login", { method: "POST", body: JSON.stringify({ password: $("#pw").value }) });
-    $("#pw").value = "";
-    start();
-  } catch (err) { $("#login-err").textContent = err.message; }
+    await api("login", { method: "POST", body: JSON.stringify({
+      password: $("#pw").value, code: $("#code").value, form: LOGIN.form,
+      website: $("#website").value, turnstile: LOGIN.turnstile,
+    }) });
+    $("#pw").value = ""; $("#code").value = "";
+    await start();
+  } catch (err) {
+    $("#login-err").textContent = err.message;
+    $("#code").value = "";
+    await showLogin(); // new form token (and a new Turnstile challenge) for the next try
+  } finally { btn.disabled = false; }
 });
 
 async function start() {
@@ -1131,7 +1212,7 @@ addEventListener("beforeunload", (e) => { if (S.dirty || S.saving) { e.preventDe
 (async () => {
   try {
     const s = await api("session");
-    if (!s.configured) { showLogin(); $("#login-msg").textContent = "O painel ainda não foi configurado no Cloudflare (banco D1 e segredos). Veja o README."; return; }
-    if (s.authed) await start(); else showLogin();
-  } catch (e) { showLogin(); $("#login-err").textContent = e.message; }
+    if (!s.configured) { $("#login").hidden = false; $("#login-form").querySelectorAll("input, button").forEach((x) => { x.disabled = true; }); $("#login-msg").textContent = "O painel ainda não foi configurado no Cloudflare (banco D1 e segredos). Veja o README."; return; }
+    if (s.authed) await start(); else showLogin(null, s);
+  } catch (e) { $("#login").hidden = false; $("#login-err").textContent = e.message; }
 })();

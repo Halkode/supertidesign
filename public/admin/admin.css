@@ -79,6 +79,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .login-card h1 { font-size: 1.5rem; }
 .login-card input { padding: .7rem .9rem; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
 .login-card .btn { margin-top: .4rem; padding: .75rem; }
+.totp-field { display: grid; gap: .4rem; }
+.totp-field input { font-size: 1.3rem; letter-spacing: .4em; text-align: center; font-variant-numeric: tabular-nums; }
+/* Honeypot: off-screen rather than display:none (some bots skip hidden fields) */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.sec-status { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.sec-status li { display: flex; gap: .7rem; align-items: flex-start; }
+.sec-status .ic { flex: none; width: 1.6rem; height: 1.6rem; border-radius: 50%; display: grid; place-items: center; font-size: .85rem; font-weight: 800; color: #fff; }
+.sec-status .on .ic { background: var(--ok); }
+.sec-status .off .ic { background: var(--warn); }
+.sessions, .audit { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
+.sessions li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .6rem .8rem; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.sessions small, .audit small { color: var(--muted); }
+.audit li { display: grid; grid-template-columns: 8.5rem 9rem 1fr; gap: .6rem; font-size: .85rem; padding: .35rem 0; border-bottom: 1px solid var(--line); }
+.audit .ev { font-weight: 700; }
+.audit .ev.bad { color: var(--danger); }
+.audit .ev.good { color: var(--ok); }
+@media (max-width: 760px) { .audit li { grid-template-columns: 1fr; gap: 0; } }
 
 /* ---------- app layout ---------- */
 .app {

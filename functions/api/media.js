@@ -5,6 +5,7 @@
 // DELETE /api/media?key=…        → removes an upload that the draft and the live site don't use
 import { fail, json, needBindings, now } from "../../server/http.js";
 import staticMeta from "../../public/assets/img/meta.json";
+import { audit } from "../../server/auth.js";
 
 const LIMITS = { image: 15e6, font: 5e6, file: 25e6, brand: 3e6 };
 
@@ -74,6 +75,7 @@ export async function onRequestPost({ request, env }) {
     const row = { key: `media/uploads/${id}`, kind, name, mime: types.lg.mime, size, w, h, lg: `media/${lgKey}`, sm: `media/${smKey || lgKey}`, created_at };
     await env.DB.prepare("INSERT INTO media (key, kind, name, mime, size, w, h, lg, sm, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
       .bind(row.key, kind, name, row.mime, size, w, h, row.lg, row.sm, created_at).run();
+    await audit(env, request, "upload", name);
     return json({ ok: true, media: row });
   }
 
@@ -88,6 +90,7 @@ export async function onRequestPost({ request, env }) {
   const row = { key: `media/${key}`, kind, name, mime: t.mime, size: file.size, w: null, h: null, lg: `media/${key}`, sm: null, created_at };
   await env.DB.prepare("INSERT INTO media (key, kind, name, mime, size, w, h, lg, sm, created_at) VALUES (?, ?, ?, ?, ?, NULL, NULL, ?, NULL, ?)")
     .bind(row.key, kind, name, row.mime, row.size, row.lg, created_at).run();
+  await audit(env, request, "upload", name);
   return json({ ok: true, media: row });
 }
 
@@ -105,5 +108,6 @@ export async function onRequestDelete({ request, env }) {
   const keys = [row.lg, row.sm].filter(Boolean).map((p) => p.replace(/^media\//, ""));
   await env.MEDIA.delete([...new Set(keys)]);
   await env.DB.prepare("DELETE FROM media WHERE key = ?").bind(key).run();
+  await audit(env, request, "media_delete", key);
   return json({ ok: true });
 }

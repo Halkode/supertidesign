@@ -31,9 +31,37 @@ CREATE TABLE IF NOT EXISTS media (
   created_at TEXT NOT NULL
 );
 
--- Limite de tentativas de login por IP
-CREATE TABLE IF NOT EXISTS login_attempts (
+-- Proteção do login: falhas por IP e bloqueio progressivo
+CREATE TABLE IF NOT EXISTS login_guard (
   ip TEXT PRIMARY KEY,
-  count INTEGER NOT NULL,
-  first_at INTEGER NOT NULL
+  fails INTEGER NOT NULL,
+  first_at INTEGER NOT NULL,     -- segundos (epoch) da primeira falha da janela
+  locked_until INTEGER NOT NULL DEFAULT 0
+);
+
+-- Sessões do painel. O id é um HMAC do token do cookie: quem lê o banco não consegue
+-- montar um cookie válido. Sair = apagar a linha.
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,
+  created_at INTEGER NOT NULL,
+  last_seen INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  ip TEXT, country TEXT, ua TEXT
+);
+
+-- Registro de acessos e ações (aba Segurança do painel)
+CREATE TABLE IF NOT EXISTS audit_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  at INTEGER NOT NULL,
+  event TEXT NOT NULL,           -- login_ok, login_fail, login_blocked, honeypot, logout, publish, upload…
+  ip TEXT, country TEXT, ua TEXT,
+  detail TEXT
+);
+CREATE INDEX IF NOT EXISTS audit_at ON audit_log (at);
+CREATE INDEX IF NOT EXISTS audit_event_at ON audit_log (event, at);
+
+-- Pequenos valores internos (ex.: último código de 2 fatores usado, contra reutilização)
+CREATE TABLE IF NOT EXISTS kv (
+  k TEXT PRIMARY KEY,
+  v TEXT NOT NULL
 );

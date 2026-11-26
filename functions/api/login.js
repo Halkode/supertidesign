@@ -1,31 +1,54 @@
-// POST /api/login { password } → session cookie
-import { makeSession, safeEqual, secretsOk, sessionCookie } from "../../server/auth.js";
+// POST /api/login { password, code?, form, website, turnstile? } → session cookie
+// Order: IP lock → form token (age) → honeypot → Turnstile → password → 2FA code.
+// Every refusal looks the same to the client ("Dados incorretos"), except a lock, which says how long.
+import {
+  audit, checkFormToken, clearFailures, clientInfo, createSession, guardState, registerFailure,
+  safeEqual, secretsOk, sessionCookie, totpEnabled, verifyTotp, verifyTurnstile,
+} from "../../server/auth.js";
 import { fail, json, needBindings, readJson } from "../../server/http.js";
 
-const WINDOW = 15 * 60; // seconds
-const MAX_TRIES = 10;
+const WRONG = "Senha ou código incorretos.";
+const minutes = (s) => Math.max(1, Math.ceil(s / 60));
+// Same response time for every failure, so timing doesn't tell a bot which check failed
+const slow = () => new Promise((r) => setTimeout(r, 400 + Math.random() * 400));
 
 export async function onRequestPost({ request, env }) {
   const missing = needBindings(env, "DB");
   if (missing) return missing;
-  if (!secretsOk(env)) return fail(503, "Defina os segredos ADMIN_PASSWORD (8+ caracteres) e SESSION_SECRET (32+ caracteres) no Cloudflare.");
+  if (!secretsOk(env)) return fail(503, "Defina os segredos ADMIN_PASSWORD (12+ caracteres) e SESSION_SECRET (32+ caracteres) no Cloudflare.");
+  const { ip } = clientInfo(request);
 
-  const ip = request.headers.get("cf-connecting-ip") || "local";
-  const t = Math.floor(Date.now() / 1000);
-  const row = await env.DB.prepare("SELECT count, first_at FROM login_attempts WHERE ip = ?").bind(ip).first();
-  if (row && t - row.first_at < WINDOW && row.count >= MAX_TRIES) {
-    return fail(429, "Muitas tentativas. Espere alguns minutos e tente de novo.");
+  const g = await guardState(env, ip);
+  if (g.locked) {
+    await audit(env, request, "login_blocked", `faltam ${minutes(g.retryIn)} min`);
+    return fail(429, `Muitas tentativas. Tente de novo em ${minutes(g.retryIn)} min.`);
   }
 
-  const { password = "" } = await readJson(request, 10_000);
-  if (!(await safeEqual(password, env.ADMIN_PASSWORD))) {
-    if (!row || t - row.first_at >= WINDOW) {
-      await env.DB.prepare("INSERT OR REPLACE INTO login_attempts (ip, count, first_at) VALUES (?, 1, ?)").bind(ip, t).run();
-    } else {
-      await env.DB.prepare("UPDATE login_attempts SET count = count + 1 WHERE ip = ?").bind(ip).run();
-    }
-    return fail(401, "Senha incorreta.");
+  let body;
+  try { body = await readJson(request, 10_000); } catch { return fail(400, "Pedido inválido."); }
+  const { password = "", code = "", form = "", website = "", turnstile = "" } = body || {};
+
+  const refuse = async (event, detail, weight = 1) => {
+    await audit(env, request, event, detail);
+    const r = await registerFailure(env, ip, weight);
+    await slow();
+    if (r.locked) return fail(429, `Muitas tentativas. Tente de novo em ${minutes(r.retryIn)} min.`);
+    return fail(401, WRONG);
+  };
+
+  // Bots: the hidden "website" field is filled, or the form was posted without/too soon after loading
+  if (website) return refuse("honeypot", "campo oculto preenchido", 5);
+  const ft = await checkFormToken(env, form);
+  if (ft !== "ok") {
+    if (ft === "expired") { await slow(); return fail(400, "A página ficou aberta tempo demais. Recarregue e tente de novo."); }
+    return refuse("honeypot", ft === "too_fast" ? "enviado rápido demais" : "sem token de formulário", ft === "too_fast" ? 3 : 5);
   }
-  await env.DB.prepare("DELETE FROM login_attempts WHERE ip = ?").bind(ip).run();
-  return json({ ok: true }, 200, { "set-cookie": sessionCookie(await makeSession(env), request) });
+  if (!(await verifyTurnstile(env, turnstile, ip))) return refuse("login_fail", "verificação anti-robô falhou");
+  if (!(await safeEqual(password, env.ADMIN_PASSWORD))) return refuse("login_fail", "senha incorreta");
+  if (totpEnabled(env) && !(await verifyTotp(env, code))) return refuse("login_fail", "código de 2 fatores incorreto");
+
+  await clearFailures(env, ip);
+  const token = await createSession(env, request);
+  await audit(env, request, "login_ok", totpEnabled(env) ? "senha + 2 fatores" : "senha");
+  return json({ ok: true }, 200, { "set-cookie": sessionCookie(request, token) });
 }
