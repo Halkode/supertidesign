@@ -1,0 +1,1060 @@
+{
+  "version": 1,
+  "site": {
+    "name": "Guilherme Eccel Superti",
+    "heroLines": [
+      "Guilherme",
+      "Eccel",
+      "Superti"
+    ],
+    "email": "guisuperti@gmail.com",
+    "links": [
+      {
+        "label": "Behance",
+        "url": "https://www.behance.net/guisuperti"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/guilherme-eccel-superti"
+      }
+    ],
+    "cv": {
+      "pt": "assets/brand/curriculo-guilherme-superti.pdf",
+      "en": "assets/brand/resume-guilherme-superti.pdf"
+    },
+    "logo": "assets/brand/logo.svg",
+    "mascot": "assets/brand/mascote.svg",
+    "ogImage": "logos/logo_superti_design.png",
+    "video": {
+      "src": "https://drive.google.com/file/d/1NDBoIz5QNcsLOFcPBIgjz1-nHi4iXoUC/preview",
+      "title": "Vídeo de apresentação da LUMA"
+    }
+  },
+  "theme": {
+    "colors": {
+      "bg": "#2748D0",
+      "bgDeep": "#1A2F8F",
+      "surface": "#2140B8",
+      "tint": "#3A5BE0",
+      "ink": "#F5F3EE",
+      "accent": "#FF3B3B",
+      "sky": "#2FC9FF",
+      "sun": "#FFD23F"
+    },
+    "radius": 10,
+    "fonts": {
+      "body": {
+        "source": "google",
+        "family": "Plus Jakarta Sans",
+        "weights": "400;500;700;800"
+      },
+      "display": {
+        "source": "same"
+      }
+    },
+    "pixelCursors": true,
+    "pattern": true,
+    "patternOpacity": 0.07,
+    "patternDuration": 36
+  },
+  "motion": {
+    "enabled": true,
+    "speed": 1,
+    "loader": true,
+    "smoothScroll": true,
+    "scrollLerp": 0.1,
+    "anchorDuration": 1.4,
+    "revealDuration": 1100,
+    "revealStagger": 70,
+    "revealDistance": 48,
+    "marquee": true,
+    "marqueeSpeed": 0.45,
+    "burst": true,
+    "burstCount": 10,
+    "magnetic": true,
+    "magnetStrength": 0.3,
+    "carouselEntrance": true,
+    "floatBreathe": true
+  },
+  "hero": {
+    "floats": [
+      {
+        "src": "trabalhos/trabalhos_32.png",
+        "alt": "Mulher carregando ecobag verde com o selo da Quitanda Kanashiro"
+      },
+      {
+        "src": "trabalhos/trabalhos_06.png",
+        "alt": "Pose da mascote LUMA"
+      },
+      {
+        "src": "trabalhos/trabalhos_24.png",
+        "alt": "Símbolo floral da marca Rama Forte em branco sobre vermelho"
+      }
+    ]
+  },
+  "banner": {
+    "src": "ilustracoes/ilustracoes_04.png",
+    "alt": "Dragão oriental vermelho e dourado serpenteando entre nuvens estilizadas sobre fundo azul-petróleo",
+    "pos": "30% 45%"
+  },
+  "portrait": {
+    "src": "home/sobre_mim.jpeg",
+    "alt": "Retrato de Guilherme Eccel Superti ao ar livre, de blazer marrom e camiseta preta"
+  },
+  "contactArt": {
+    "src": "home/home_07.png",
+    "alt": "Autorretrato ilustrado de Guilherme com seu cachorro"
+  },
+  "aboutFacts": [
+    "1",
+    "2",
+    "4",
+    "5",
+    "3"
+  ],
+  "filters": [
+    "identity",
+    "mascot",
+    "ux",
+    "packaging"
+  ],
+  "works": [
+    {
+      "id": "luma",
+      "title": "LUMA — Mascote IFSC Design",
+      "tags": [
+        "mascot"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_06.png",
+          "alt": "Pose da mascote LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_11.png",
+          "alt": "Cartaz da mascote LUMA aplicado em parede de tijolos"
+        },
+        {
+          "src": "trabalhos/trabalhos_08.png",
+          "alt": "Camiseta com a mascote LUMA em mockup sobre parede roxa"
+        },
+        {
+          "src": "trabalhos/trabalhos_07.png",
+          "alt": "Caneca personalizada com a mascote LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_09.png",
+          "alt": "Cartela de adesivos com sete poses e expressões da LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_04.png",
+          "alt": "LUMA de corpo inteiro sobre padrão gráfico roxo"
+        }
+      ]
+    },
+    {
+      "id": "rama",
+      "title": "Hortifruti Rama Forte",
+      "tags": [
+        "identity",
+        "mascot"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_24.png",
+          "alt": "Símbolo floral da marca Rama Forte em branco sobre vermelho"
+        },
+        {
+          "src": "trabalhos/trabalhos_26.png",
+          "alt": "Mascote caqui da Rama Forte fazendo joinha"
+        },
+        {
+          "src": "trabalhos/trabalhos_13.png",
+          "alt": "Post anunciando a novidade Ameixa Rubimel com o mascote"
+        },
+        {
+          "src": "trabalhos/trabalhos_15.png",
+          "alt": "Post promocional de caqui com textura de papel rasgado e mascote"
+        },
+        {
+          "src": "trabalhos/trabalhos_20.png",
+          "alt": "Post de inauguração do novo sacolão Rama Forte na Vila Diva"
+        },
+        {
+          "src": "trabalhos/trabalhos_22.jpg",
+          "alt": "Fachada da loja Hortifruti Rama Forte com o letreiro vermelho aplicado"
+        }
+      ]
+    },
+    {
+      "id": "dragao",
+      "title": "O Caminho do Dragão",
+      "tags": [
+        "packaging",
+        "identity"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_59.jpg",
+          "alt": "Caixa, cartas, manual e tabuleiro do jogo O Caminho do Dragão expostos no SBGames"
+        },
+        {
+          "src": "trabalhos/trabalhos_61.jpg",
+          "alt": "Detalhe do tabuleiro modular com peças de dragão e baralhos de cartas"
+        },
+        {
+          "src": "trabalhos/trabalhos_58.png",
+          "alt": "Arte planificada da caixa do jogo com dragões vermelho e azul"
+        },
+        {
+          "src": "trabalhos/trabalhos_60.jpg",
+          "alt": "Anúncio dos finalistas do SBoardGames com Caminho do Dragão na lista"
+        }
+      ]
+    },
+    {
+      "id": "c2e",
+      "title": "C2E — Engenharia Elétrica",
+      "tags": [
+        "identity",
+        "mascot"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_48.png",
+          "alt": "Camiseta preta da C2E com o peru, raio e os valores da empresa"
+        },
+        {
+          "src": "trabalhos/trabalhos_46.png",
+          "alt": "Camiseta C2E com o peru em estilo pôster e a palavra Energia"
+        },
+        {
+          "src": "trabalhos/trabalhos_47.png",
+          "alt": "Logo C2E ao lado do mascote peru fazendo joinha"
+        }
+      ]
+    },
+    {
+      "id": "kanashiro",
+      "title": "Quitanda Kanashiro",
+      "tags": [
+        "identity"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_32.png",
+          "alt": "Mulher carregando ecobag verde com o selo da Quitanda Kanashiro"
+        },
+        {
+          "src": "trabalhos/trabalhos_31.png",
+          "alt": "Ecobag verde Quitanda Kanashiro pendurada em banqueta preta"
+        },
+        {
+          "src": "trabalhos/trabalhos_29.png",
+          "alt": "Selo circular verde da Quitanda Kanashiro com kanji central"
+        },
+        {
+          "src": "trabalhos/trabalhos_27.png",
+          "alt": "Versão horizontal do logotipo Quitanda Kanashiro em branco sobre verde"
+        }
+      ]
+    },
+    {
+      "id": "techcare",
+      "title": "Tech&Care",
+      "tags": [
+        "identity"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_54.png",
+          "alt": "Cartões de visita Tech&Care com logo e padrão gráfico sobre fundo verde"
+        },
+        {
+          "src": "trabalhos/trabalhos_56.png",
+          "alt": "Camisa polo verde-menta com logo bordado Tech&Care"
+        },
+        {
+          "src": "trabalhos/trabalhos_55.png",
+          "alt": "Camisa polo branca com selo Tech&Care e mangas estampadas"
+        },
+        {
+          "src": "trabalhos/trabalhos_57.png",
+          "alt": "Ícone do logotipo Tech&Care: coração-circuito e mão"
+        }
+      ]
+    },
+    {
+      "id": "cookie",
+      "title": "Cookie Haven",
+      "tags": [
+        "mascot",
+        "packaging"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_53.png",
+          "alt": "Embalagem Cookie Haven com o mascote"
+        },
+        {
+          "src": "trabalhos/trabalhos_52.png",
+          "alt": "Mockup de embalagem Cookie Haven"
+        }
+      ]
+    },
+    {
+      "id": "ejep",
+      "title": "EJEP",
+      "tags": [
+        "mascot"
+      ],
+      "pos": "",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_50.png",
+          "alt": "Pôster com o mascote pintinho da EJEP"
+        }
+      ]
+    },
+    {
+      "id": "tanac",
+      "title": "Tanac — UX/UI",
+      "tags": [
+        "ux"
+      ],
+      "pos": "top",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/tanac_1.png",
+          "alt": "Site da Tanac: página Sobre com o propósito e a trajetória da empresa"
+        },
+        {
+          "src": "trabalhos/tanac_2.png",
+          "alt": "Site da Tanac: Código de Conduta, canal de denúncias, newsletter e rodapé"
+        },
+        {
+          "src": "trabalhos/tanac_3.png",
+          "alt": "Site da Tanac: blocos de Unidades de Negócios, Certificações e P&D"
+        }
+      ]
+    },
+    {
+      "id": "ipanema",
+      "title": "Ipanema Rider / E-⁠Commerce — UX/UI",
+      "tags": [
+        "ux"
+      ],
+      "pos": "top",
+      "cover": "",
+      "images": [
+        {
+          "src": "trabalhos/ipanema_1.png",
+          "alt": "Loja Grendene: página da Rider Kids com banner, faixa de ofertas, newsletter e rodapé"
+        },
+        {
+          "src": "trabalhos/ipanema_2.png",
+          "alt": "Loja Grendene: página da Ipanema com banner Bebê e Infantil, vitrine Black Friday e descontos"
+        },
+        {
+          "src": "trabalhos/ipanema_3.png",
+          "alt": "Loja Grendene: vitrine de sandálias Ipanema, carrossel de personagens e newsletter"
+        }
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "arra",
+      "title": "Grapa — ARRA Sweeties",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_43.png",
+          "alt": "Personagem uva da campanha ARRA Sweeties"
+        },
+        {
+          "src": "trabalhos/trabalhos_42.png",
+          "alt": "Personagens uva da campanha ARRA Cherry Crush"
+        }
+      ]
+    },
+    {
+      "id": "alpha",
+      "title": "Alpha Educ",
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_66.png",
+          "alt": "Ilustração do cachorrinho Alpha Educ"
+        },
+        {
+          "src": "trabalhos/trabalhos_64.png",
+          "alt": "Ilustração em preto e branco do cachorrinho"
+        },
+        {
+          "src": "trabalhos/trabalhos_65.png",
+          "alt": "Ilustração do cachorrinho estudando"
+        }
+      ]
+    }
+  ],
+  "illus": [
+    {
+      "src": "ilustracoes/ilustracoes_11.png",
+      "alt": "Quadríptico em estilo mangá com Lupin, Goemon, Fujiko e Jigen, cada um em uma cor chapada"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_39.png",
+      "alt": "Estrelinha Luma em 3D com pelagem amarela felpuda flutuando no céu estrelado"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_13.png",
+      "alt": "Treinador Pokémon Red com Pikachu no ombro sobre fundo vermelho"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_37.png",
+      "alt": "Três estatuetas 3D do Doraemon acenando sobre fundo preto com reflexo"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_26.png",
+      "alt": "Pintura digital no estilo Arcimboldo: rosto formado por frutas e legumes"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_40.png",
+      "alt": "Três Pikmins vermelhos em 3D caminhando e acenando"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_17.jpg",
+      "alt": "Pintura digital de cantor de rock cantando ao microfone"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_09.png",
+      "alt": "Kirby em 3D cercado de estrelas douradas sobre fundo salmão"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_32.png",
+      "alt": "Arale, Gatchan e Senbei em estilo adesivo sobre fundo verde"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_15.png",
+      "alt": "Personagem Apeach em 3D, sorridente e brilhante, sobre fundo lilás"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_54.png",
+      "alt": "Desenho a grafite de Kazuma Kiryu com dragão tatuado ao fundo"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_59.png",
+      "alt": "Retrato pintado de Goro Majima de perfil, com tapa-olho"
+    }
+  ],
+  "gallery": [
+    {
+      "src": "ilustracoes/ilustracoes_05.png",
+      "alt": "Colagem densa de personagens cartunescos em tinta preta com toques pastel"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_27.png",
+      "alt": "Asuka de Evangelion em aquarela sobre papel texturizado"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_47.png",
+      "alt": "Pikachu saltitante em traço de giz sobre fundo amarelo"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_48.png",
+      "alt": "Ayrton Senna em versão chibi aquarelada"
+    },
+    {
+      "src": "home/home_09.png",
+      "alt": "Pintura digital estilo Arcimboldo com panela no lugar do chapéu"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_21.png",
+      "alt": "Retrato masculino em preto e branco com retícula"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_45.png",
+      "alt": "Gatinhos azuis em giz de cera brincando num escorregador"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_46.png",
+      "alt": "Mosaico em marcador de ícones dos games"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_61.png",
+      "alt": "Bávaro bigodudo brindando com cerveja"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_64.jpg",
+      "alt": "Desenho a traço de Brian May tocando guitarra"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_34.png",
+      "alt": "Garota de boina vermelha sorrindo em traço cartum"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_57.png",
+      "alt": "Amy Rose clássica sorrindo com corações"
+    },
+    {
+      "src": "ilustracoes/ilustracoes_36.png",
+      "alt": "Menina de franja abraçando um gato laranja"
+    }
+  ],
+  "collage": [
+    {
+      "src": "colagens/colagens_06.jpg",
+      "alt": "Colagem com recortes de rostos sobre listras magenta e laranja e a frase Always look on the bright side of life"
+    },
+    {
+      "src": "colagens/colagens_17.jpg",
+      "alt": "Colagem do The Who em cores chapadas sobre fundo azul com o alvo mod"
+    },
+    {
+      "src": "colagens/colagens_14.jpg",
+      "alt": "Quatro retratos de John Lydon com as letras P, I e L desenhadas à mão"
+    },
+    {
+      "src": "colagens/colagens_07.jpg",
+      "alt": "Retratos do Queen em quadrantes de cores saturadas"
+    },
+    {
+      "src": "colagens/colagens_16.jpg",
+      "alt": "Colagem de Jimmy Cliff com capas de discos saindo da cabeça"
+    },
+    {
+      "src": "colagens/colagens_12.jpg",
+      "alt": "Colagem psicodélica com Pete Townshend saltando ao redor do alvo mod"
+    },
+    {
+      "src": "colagens/colagens_20.jpg",
+      "alt": "Pete Townshend sentado sobre fundo manuscrito, Let my love open the door"
+    },
+    {
+      "src": "colagens/colagens_05.jpg",
+      "alt": "Quatro retratos pop art de Roger Daltrey"
+    },
+    {
+      "src": "colagens/colagens_04.jpg",
+      "alt": "Retrato de Johnny Rotten com cabelo laranja e flores azuis"
+    },
+    {
+      "src": "colagens/colagens_18.jpg",
+      "alt": "Capa de A Quick One, do The Who, cercada por recortes"
+    }
+  ],
+  "skills": [
+    {
+      "id": "illustrator",
+      "name": "Illustrator",
+      "video": false,
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_24.png",
+          "alt": "Símbolo floral da Rama Forte"
+        },
+        {
+          "src": "trabalhos/trabalhos_29.png",
+          "alt": "Selo da Quitanda Kanashiro"
+        },
+        {
+          "src": "trabalhos/trabalhos_27.png",
+          "alt": "Logotipo horizontal Quitanda Kanashiro"
+        },
+        {
+          "src": "trabalhos/trabalhos_49.png",
+          "alt": "Logo C2E Engenharia Elétrica"
+        },
+        {
+          "src": "trabalhos/trabalhos_57.png",
+          "alt": "Ícone Tech&Care"
+        },
+        {
+          "src": "trabalhos/trabalhos_04.png",
+          "alt": "LUMA de corpo inteiro"
+        },
+        {
+          "src": "trabalhos/trabalhos_26.png",
+          "alt": "Mascote caqui Rama Forte"
+        },
+        {
+          "src": "trabalhos/trabalhos_47.png",
+          "alt": "Logo C2E com mascote peru"
+        }
+      ]
+    },
+    {
+      "id": "photoshop",
+      "name": "Photoshop",
+      "video": false,
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_11.png",
+          "alt": "Cartaz da LUMA em parede de tijolos"
+        },
+        {
+          "src": "trabalhos/trabalhos_08.png",
+          "alt": "Camiseta da LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_07.png",
+          "alt": "Caneca da LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_22.jpg",
+          "alt": "Fachada Rama Forte"
+        },
+        {
+          "src": "trabalhos/trabalhos_32.png",
+          "alt": "Ecobag Quitanda Kanashiro"
+        },
+        {
+          "src": "trabalhos/trabalhos_31.png",
+          "alt": "Ecobag na banqueta"
+        },
+        {
+          "src": "trabalhos/trabalhos_54.png",
+          "alt": "Cartões Tech&Care"
+        },
+        {
+          "src": "trabalhos/trabalhos_56.png",
+          "alt": "Camisa polo Tech&Care"
+        },
+        {
+          "src": "trabalhos/trabalhos_48.png",
+          "alt": "Camiseta C2E"
+        },
+        {
+          "src": "trabalhos/trabalhos_53.png",
+          "alt": "Embalagem Cookie Haven"
+        }
+      ]
+    },
+    {
+      "id": "premiere",
+      "name": "Premiere Pro",
+      "video": true,
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_11.png",
+          "alt": "Cartaz da LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_09.png",
+          "alt": "Adesivos da LUMA"
+        }
+      ]
+    },
+    {
+      "id": "aftereffects",
+      "name": "After Effects",
+      "video": true,
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_09.png",
+          "alt": "Poses e expressões da LUMA"
+        },
+        {
+          "src": "trabalhos/trabalhos_06.png",
+          "alt": "Pose da LUMA"
+        }
+      ]
+    },
+    {
+      "id": "affinity",
+      "name": "Affinity",
+      "video": false,
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_58.png",
+          "alt": "Arte da caixa de O Caminho do Dragão"
+        },
+        {
+          "src": "trabalhos/trabalhos_61.jpg",
+          "alt": "Tabuleiro e cartas de O Caminho do Dragão"
+        },
+        {
+          "src": "trabalhos/trabalhos_59.jpg",
+          "alt": "O Caminho do Dragão no SBGames"
+        }
+      ]
+    },
+    {
+      "id": "canva",
+      "name": "Canva",
+      "video": false,
+      "images": [
+        {
+          "src": "trabalhos/trabalhos_13.png",
+          "alt": "Post Ameixa Rubimel"
+        },
+        {
+          "src": "trabalhos/trabalhos_15.png",
+          "alt": "Post promocional de caqui"
+        },
+        {
+          "src": "trabalhos/trabalhos_20.png",
+          "alt": "Post de inauguração Rama Forte"
+        }
+      ]
+    },
+    {
+      "id": "blender",
+      "name": "Blender",
+      "video": false,
+      "images": [
+        {
+          "src": "ilustracoes/ilustracoes_39.png",
+          "alt": "Estrelinha Luma em 3D"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_37.png",
+          "alt": "Doraemon em 3D"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_40.png",
+          "alt": "Pikmins em 3D"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_09.png",
+          "alt": "Kirby em 3D"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_15.png",
+          "alt": "Apeach em 3D"
+        }
+      ]
+    },
+    {
+      "id": "clip",
+      "name": "Clip Studio Paint",
+      "video": false,
+      "images": [
+        {
+          "src": "ilustracoes/ilustracoes_11.png",
+          "alt": "Lupin III em estilo mangá"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_13.png",
+          "alt": "Red e Pikachu"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_26.png",
+          "alt": "Rosto de frutas estilo Arcimboldo"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_17.jpg",
+          "alt": "Cantor de rock"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_59.png",
+          "alt": "Goro Majima"
+        },
+        {
+          "src": "ilustracoes/ilustracoes_32.png",
+          "alt": "Arale e amigos"
+        },
+        {
+          "src": "home/home_09.png",
+          "alt": "Pintura Arcimboldo com panela"
+        }
+      ]
+    }
+  ],
+  "i18n": {
+    "pt": {
+      "doc.title": "Guilherme Eccel Superti — Designer",
+      "skip": "Pular para o conteúdo",
+      "loading": "Carregando",
+      "nav.about": "Quem sou eu",
+      "nav.works": "Trabalhos",
+      "nav.illus": "Ilustrações",
+      "nav.collage": "Graphic Montages",
+      "nav.contact": "Contato",
+      "nav.menu": "Menu",
+      "hero.cta": "Ver trabalhos",
+      "hero.mascot": "Dar um oi para o mascote",
+      "marquee": "Identidade visual|Mascotes|Ilustração|3D|Graphic montage|Social media|Board games|Vídeo",
+      "about.title": "Quem sou eu",
+      "about.yearsN": "5+",
+      "about.years": "anos de experiência em design",
+      "about.p1": "Guilherme Eccel (nascido em 2002 em Porto Alegre-RS) é um designer, editor de vídeo, artista 3D e ilustrador brasileiro. É bacharel em Design pelo Instituto Federal de Santa Catarina (IFSC), em Florianópolis. Trabalhou na A3 Design entre 2024 e 2025 e desde então atua como freelancer.",
+      "about.p2": "Domina diversos softwares criativos, incluindo Adobe Illustrator, Photoshop, Premiere Pro, After Effects, Affinity, Canva, Blender e Clip Studio Paint, além de outras ferramentas de design, ilustração, modelagem 3D e produção audiovisual.",
+      "about.k1": "Base",
+      "about.v1": "Florianópolis, Brasil",
+      "about.k2": "Atuação",
+      "about.v2": "Design, vídeo, 3D, ilustração",
+      "about.k4": "Formação",
+      "about.v4": "Bacharelado em Design, IFSC (2022–2026)",
+      "about.k5": "Experiência",
+      "about.v5": "+5 anos em design · A3 Design (2024–25) · Hortifruti Rama Forte (2026) · Tavi Studio (2026)",
+      "about.k3": "Idiomas",
+      "about.v3": "Português (nativo), English (avançado), 日本語 (N5), Español (básico)",
+      "about.cv": "Baixar currículo (PDF)",
+      "skill.hint": "Clique numa ferramenta para ver trabalhos feitos com ela.",
+      "skill.made": "Feito com",
+      "skill.works": "itens",
+      "skill.video": "Vídeo de apresentação da LUMA",
+      "works.title": "Trabalhos",
+      "works.intro": "Projetos selecionados. Filtre por categoria e clique num projeto para ver todas as imagens.",
+      "filter.label": "Filtrar projetos",
+      "filter.all": "Todos",
+      "filter.identity": "Identidade visual",
+      "filter.mascot": "Mascotes",
+      "filter.ux": "UX/UI",
+      "filter.packaging": "Embalagem e jogos",
+      "filter.count": "projetos",
+      "work.prev": "Projeto anterior",
+      "work.next": "Próximo projeto",
+      "illus.showMore": "Ver mais ilustrações",
+      "illus.showLess": "Ver menos",
+      "luma.cat": "Mascote · Ilustração · Manual de marca · 2026",
+      "luma.desc": "LUMA, mascote do curso de Design do IFSC: poses, aplicações em produtos, vídeo e manual de uso.",
+      "rama.cat": "Logo · Identidade visual · Mascote · Social media · 2026",
+      "rama.desc": "Identidade completa para o Hortifruti Rama Forte, do símbolo floral e da fachada ao mascote caqui e aos posts.",
+      "dragao.cat": "Board game · Identidade visual · Embalagem · 2025",
+      "dragao.desc": "Jogo de tabuleiro modular para 2 jogadores, finalista do SBoardGames no SBGames 2025.",
+      "c2e.cat": "Identidade visual · Mascote · Camisetas",
+      "c2e.desc": "Identidade, mascote peru e camisetas para a empresa júnior C2E Engenharia Elétrica.",
+      "kanashiro.cat": "Logo · Identidade visual",
+      "kanashiro.desc": "Logotipo e identidade para uma quitanda de origem nipo-brasileira, com o kanji 金城 em selo circular.",
+      "techcare.cat": "Logo · Identidade visual · Uniforme",
+      "techcare.desc": "Coração em circuito e mão acolhedora, aplicados em cartões de visita e uniformes.",
+      "cookie.cat": "Mascote · Embalagem",
+      "cookie.desc": "Mascote e embalagem para a Cookie Haven, com o personagem aplicado na caixa de cookies.",
+      "ejep.cat": "Mascote · 2024",
+      "ejep.desc": "Mascote pintinho criado para a EJEP, aplicado em pôster.",
+      "tanac.cat": "UX/UI · Web design",
+      "tanac.desc": "Telas para o site institucional da Tanac: página Sobre, Código de Conduta e blocos de Unidades de Negócios, Certificações e P&D.",
+      "ipanema.cat": "UX/UI · E-commerce",
+      "ipanema.desc": "Telas de e-commerce da Loja Grendene para as marcas Ipanema e Rider Kids: banners, vitrines de produtos, ofertas, personagens e newsletter.",
+      "more.title": "Outros projetos",
+      "more.cookie": "Mascote e embalagem",
+      "more.ejep": "Mascote · 2024",
+      "more.arra": "Personagens para campanha",
+      "more.alpha": "Ilustrações do site",
+      "illus.title": "Ilustrações",
+      "illus.intro": "Desenhar é um hobby desde criança — daí vieram a pintura digital e a modelagem 3D.",
+      "illus.more": "Mais ilustrações",
+      "collage.title": "Graphic Montages",
+      "contact.kicker": "Vamos conversar?",
+      "contact.title": "Contato",
+      "contact.text": "Se você procura um designer comprometido com criatividade e qualidade, será um prazer conversar sobre seu projeto.",
+      "contact.copy": "Copiar",
+      "contact.copied": "E-mail copiado!",
+      "contact.cv": "Currículo (PDF)",
+      "contact.art": "Autorretrato ilustrado de Guilherme com seu cachorro",
+      "top": "Voltar ao topo",
+      "ui.prev": "Anterior",
+      "ui.next": "Próximo",
+      "ui.go": "Ir para a imagem",
+      "ui.of": "de",
+      "ui.view": "Ver",
+      "ui.close": "Fechar",
+      "ui.zoom": "Ampliar imagem",
+      "ui.slides": "Imagens",
+      "doc.description": "Portfólio de Guilherme Eccel Superti: designer, ilustrador, artista 3D e editor de vídeo em Florianópolis."
+    },
+    "en": {
+      "doc.title": "Guilherme Eccel Superti — Designer",
+      "skip": "Skip to content",
+      "loading": "Loading",
+      "nav.about": "About",
+      "nav.works": "Work",
+      "nav.illus": "Illustrations",
+      "nav.collage": "Graphic Montages",
+      "nav.contact": "Contact",
+      "nav.menu": "Menu",
+      "hero.cta": "See the work",
+      "hero.mascot": "Say hi to the mascot",
+      "marquee": "Brand identity|Mascots|Illustration|3D|Graphic montage|Social media|Board games|Video",
+      "about.title": "About me",
+      "about.yearsN": "5+",
+      "about.years": "years of experience in design",
+      "about.p1": "Guilherme Eccel (born in 2002 in Porto Alegre, Brazil) is a Brazilian designer, video editor, 3D artist and illustrator. He holds a Bachelor’s degree in Design from the Federal Institute of Santa Catarina (IFSC) in Florianópolis. He worked at A3 Design from 2024 to 2025 and has been freelancing ever since.",
+      "about.p2": "He is proficient in a wide range of creative software, including Adobe Illustrator, Photoshop, Premiere Pro, After Effects, Affinity, Canva, Blender and Clip Studio Paint, as well as other tools for design, illustration, 3D modeling and video.",
+      "about.k1": "Based in",
+      "about.v1": "Florianópolis, Brazil",
+      "about.k2": "Focus",
+      "about.v2": "Design, video, 3D, illustration",
+      "about.k4": "Education",
+      "about.v4": "B.A. in Design, IFSC (2022–2026)",
+      "about.k5": "Experience",
+      "about.v5": "5+ years in design · A3 Design (2024–25) · Hortifruti Rama Forte (2026) · Tavi Studio (2026)",
+      "about.k3": "Languages",
+      "about.v3": "Portuguese (native), English (advanced), Japanese (JLPT N5), Spanish (basic)",
+      "about.cv": "Download résumé (PDF)",
+      "skill.hint": "Click a tool to see work made with it.",
+      "skill.made": "Made with",
+      "skill.works": "items",
+      "skill.video": "LUMA presentation video",
+      "works.title": "Selected work",
+      "works.intro": "Selected projects. Filter by category and click a project to see every image.",
+      "filter.label": "Filter projects",
+      "filter.all": "All",
+      "filter.identity": "Brand identity",
+      "filter.mascot": "Mascots",
+      "filter.ux": "UX/UI",
+      "filter.packaging": "Packaging & games",
+      "filter.count": "projects",
+      "work.prev": "Previous project",
+      "work.next": "Next project",
+      "illus.showMore": "Show more illustrations",
+      "illus.showLess": "Show less",
+      "luma.cat": "Mascot · Illustration · Brand guidelines · 2026",
+      "luma.desc": "LUMA, the mascot of IFSC’s Design program: poses, merchandise, a promo video and brand guidelines.",
+      "rama.cat": "Logo · Brand identity · Mascot · Social media · 2026",
+      "rama.desc": "A complete identity for Hortifruti Rama Forte, from the floral symbol and storefront to the persimmon mascot and posts.",
+      "dragao.cat": "Board game · Brand identity · Packaging · 2025",
+      "dragao.desc": "A modular two-player board game, finalist at SBoardGames, SBGames 2025.",
+      "c2e.cat": "Brand identity · Mascot · T-shirts",
+      "c2e.desc": "Identity, turkey mascot and t-shirts for C2E, an electrical engineering junior enterprise.",
+      "kanashiro.cat": "Logo · Brand identity",
+      "kanashiro.desc": "Logo and identity for a Japanese-Brazilian greengrocer, built around the kanji 金城 in a round seal.",
+      "techcare.cat": "Logo · Brand identity · Uniforms",
+      "techcare.desc": "A circuit heart and a caring hand, applied to business cards and uniforms.",
+      "cookie.cat": "Mascot · Packaging",
+      "cookie.desc": "Mascot and packaging for Cookie Haven, with the character applied to the cookie box.",
+      "ejep.cat": "Mascot · 2024",
+      "ejep.desc": "A little chick mascot created for EJEP, applied to a poster.",
+      "tanac.cat": "UX/UI · Web design",
+      "tanac.desc": "Screens for Tanac’s corporate website: the About page, the Code of Conduct and the Business Units, Certifications and R&D blocks.",
+      "ipanema.cat": "UX/UI · E-commerce",
+      "ipanema.desc": "E-commerce screens for Loja Grendene’s Ipanema and Rider Kids brands: banners, product showcases, deals, characters and newsletter.",
+      "more.title": "More projects",
+      "more.cookie": "Mascot and packaging",
+      "more.ejep": "Mascot · 2024",
+      "more.arra": "Campaign characters",
+      "more.alpha": "Website illustrations",
+      "illus.title": "Illustrations",
+      "illus.intro": "Drawing has been a hobby since childhood — digital painting and 3D modeling grew out of it.",
+      "illus.more": "More illustrations",
+      "collage.title": "Graphic Montages",
+      "contact.kicker": "Shall we talk?",
+      "contact.title": "Contact",
+      "contact.text": "If you’re looking for a designer committed to creativity and quality, I’d be glad to talk about your project.",
+      "contact.copy": "Copy",
+      "contact.copied": "Email copied!",
+      "contact.cv": "Résumé (PDF)",
+      "contact.art": "Illustrated self-portrait of Guilherme holding his dog",
+      "top": "Back to top",
+      "ui.prev": "Previous",
+      "ui.next": "Next",
+      "ui.go": "Go to image",
+      "ui.of": "of",
+      "ui.view": "View",
+      "ui.close": "Close",
+      "ui.zoom": "Enlarge image",
+      "ui.slides": "Images",
+      "doc.description": "Portfolio of Guilherme Eccel Superti: designer, illustrator, 3D artist and video editor based in Florianópolis."
+    },
+    "ja": {
+      "doc.title": "Guilherme Eccel Superti — デザイナー",
+      "skip": "本文へスキップ",
+      "loading": "読み込み中",
+      "nav.about": "自己紹介",
+      "nav.works": "作品",
+      "nav.illus": "イラスト",
+      "nav.collage": "モンタージュ",
+      "nav.contact": "お問い合わせ",
+      "nav.menu": "メニュー",
+      "hero.cta": "作品を見る",
+      "hero.mascot": "マスコットにあいさつ",
+      "marquee": "ブランディング|マスコット|イラスト|3D|モンタージュ|SNS|ボードゲーム|映像",
+      "about.title": "自己紹介",
+      "about.yearsN": "5年以上",
+      "about.years": "のデザイン経験",
+      "about.p1": "Guilherme Eccel(2002年、ブラジル・ポルトアレグレ生まれ)は、デザイナー、動画編集者、3Dアーティスト、イラストレーターです。フロリアノーポリスのサンタカタリーナ連邦教育機関(IFSC)でデザインの学士号を取得。2024年から2025年までA3 Designで勤務し、その後はフリーランスとして活動しています。",
+      "about.p2": "Adobe Illustrator、Photoshop、Premiere Pro、After Effects、Affinity、Canva、Blender、Clip Studio Paintをはじめ、デザイン、イラスト、3Dモデリング、映像制作のための幅広いツールを使いこなします。",
+      "about.k1": "拠点",
+      "about.v1": "ブラジル、フロリアノーポリス",
+      "about.k2": "専門",
+      "about.v2": "デザイン、映像、3D、イラスト",
+      "about.k4": "学歴",
+      "about.v4": "IFSC デザイン学士(2022–2026)",
+      "about.k5": "職歴",
+      "about.v5": "デザイン経験5年以上 · A3 Design (2024–25) · Hortifruti Rama Forte (2026) · Tavi Studio (2026)",
+      "about.k3": "言語",
+      "about.v3": "ポルトガル語(母語)、英語(上級)、日本語(N5)、スペイン語(初級)",
+      "about.cv": "履歴書をダウンロード(英語版)",
+      "skill.hint": "ツールをクリックすると、そのツールで制作した作品が見られます。",
+      "skill.made": "使用ツール",
+      "skill.works": "点",
+      "skill.video": "LUMA紹介動画",
+      "works.title": "作品",
+      "works.intro": "選りすぐりのプロジェクト。カテゴリーで絞り込み、プロジェクトをクリックするとすべての画像が見られます。",
+      "filter.label": "プロジェクトを絞り込む",
+      "filter.all": "すべて",
+      "filter.identity": "ブランディング",
+      "filter.mascot": "マスコット",
+      "filter.ux": "UX/UI",
+      "filter.packaging": "パッケージ・ゲーム",
+      "filter.count": "件",
+      "work.prev": "前のプロジェクト",
+      "work.next": "次のプロジェクト",
+      "illus.showMore": "イラストをもっと見る",
+      "illus.showLess": "閉じる",
+      "luma.cat": "マスコット · イラスト · ブランドガイド · 2026",
+      "luma.desc": "IFSCデザイン学科のマスコット「LUMA」。ポーズ、グッズ、動画、ブランドガイドラインを制作。",
+      "rama.cat": "ロゴ · ブランディング · マスコット · SNS · 2026",
+      "rama.desc": "Hortifruti Rama Forteのブランド一式。花のシンボルや店舗サインから、柿のマスコット、SNS投稿まで。",
+      "dragao.cat": "ボードゲーム · ブランディング · パッケージ · 2025",
+      "dragao.desc": "2人用のモジュール式ボードゲーム。SBGames 2025 SBoardGamesファイナリスト。",
+      "c2e.cat": "ブランディング · マスコット · Tシャツ",
+      "c2e.desc": "電気工学のジュニア企業C2Eのロゴ、七面鳥のマスコット、Tシャツを制作。",
+      "kanashiro.cat": "ロゴ · ブランディング",
+      "kanashiro.desc": "日系ブラジル人の青果店のロゴ。丸い印章に「金城」の漢字を配置。",
+      "techcare.cat": "ロゴ · ブランディング · ユニフォーム",
+      "techcare.desc": "回路のハートと寄り添う手。名刺やユニフォームに展開。",
+      "cookie.cat": "マスコット · パッケージ",
+      "cookie.desc": "Cookie Havenのマスコットとパッケージ。クッキーの箱にキャラクターを展開。",
+      "ejep.cat": "マスコット · 2024",
+      "ejep.desc": "EJEPのためにデザインしたひよこのマスコット。ポスターに展開。",
+      "tanac.cat": "UX/UI · ウェブデザイン",
+      "tanac.desc": "Tanacのコーポレートサイトの画面デザイン。会社概要、行動規範、事業部門・認証・研究開発のセクション。",
+      "ipanema.cat": "UX/UI · Eコマース",
+      "ipanema.desc": "Loja GrendeneのIpanemaとRider KidsのECサイト画面。バナー、商品一覧、セール、キャラクター、ニュースレター。",
+      "more.title": "その他のプロジェクト",
+      "more.cookie": "マスコットとパッケージ",
+      "more.ejep": "マスコット · 2024",
+      "more.arra": "キャンペーン用キャラクター",
+      "more.alpha": "ウェブサイトのイラスト",
+      "illus.title": "イラスト",
+      "illus.intro": "子どもの頃から絵を描くのが趣味。そこからデジタルペイントや3Dモデリングへと広がりました。",
+      "illus.more": "その他のイラスト",
+      "collage.title": "グラフィック・モンタージュ",
+      "contact.kicker": "お気軽にご連絡ください",
+      "contact.title": "お問い合わせ",
+      "contact.text": "創造性と品質にこだわるデザイナーをお探しなら、ぜひプロジェクトについてお話ししましょう。",
+      "contact.copy": "コピー",
+      "contact.copied": "メールをコピーしました",
+      "contact.cv": "履歴書(PDF・英語)",
+      "contact.art": "愛犬を抱くGuilhermeのイラスト自画像",
+      "top": "トップへ戻る",
+      "ui.prev": "前へ",
+      "ui.next": "次へ",
+      "ui.go": "画像へ移動",
+      "ui.of": "/",
+      "ui.view": "見る",
+      "ui.close": "閉じる",
+      "ui.zoom": "画像を拡大",
+      "ui.slides": "画像",
+      "doc.description": "グイリェルメ・エッセル・スペルティのポートフォリオ。フロリアノポリスを拠点とするデザイナー、イラストレーター、3Dアーティスト、映像編集者。"
+    }
+  }
+}

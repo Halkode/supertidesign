@@ -12,7 +12,15 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const A = window.anime || null; // anime.js may fail to load — every feature checks
-  const motion = !!A && !reduced;
+  // Settings from the CMS panel (window.SITE_CONFIG, written by shared/render.js)
+  const CFG = window.SITE_CONFIG || {};
+  const M = Object.assign({
+    enabled: true, speed: 1, loader: true, smoothScroll: true, scrollLerp: 0.1, anchorDuration: 1.4,
+    revealDuration: 1100, revealStagger: 70, revealDistance: 48, marquee: true, marqueeSpeed: 0.45,
+    burst: true, burstCount: 10, magnetic: true, magnetStrength: 0.3, carouselEntrance: true,
+  }, CFG.motion);
+  const motion = !!A && !reduced && M.enabled;
+  if (A && A.engine) A.engine.speed = M.speed; // global playback rate for every anime.js tween
   const { animate, createTimeline, stagger, createSpring, createAnimatable, utils } = A || {};
   const spring = (stiffness = 180, damping = 12) => createSpring({ stiffness, damping });
   if (motion) root.classList.add("anim");
@@ -21,7 +29,7 @@
   const I18N = window.I18N || { pt: {} };
   let LANG = "pt";
   const t = (k) => (I18N[LANG] && I18N[LANG][k]) || I18N.pt[k] || k;
-  const CV = { pt: "assets/brand/curriculo-guilherme-superti.pdf", en: "assets/brand/resume-guilherme-superti.pdf" };
+  const CV = Object.assign({ pt: "assets/brand/curriculo-guilherme-superti.pdf", en: "assets/brand/resume-guilherme-superti.pdf" }, CFG.cv);
 
   function setLang(l) {
     LANG = I18N[l] ? l : "pt";
@@ -61,15 +69,15 @@
 
   /* --------------------------------------------------------- smooth scroll */
   let lenis = null;
-  if (!reduced && window.Lenis) {
-    lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1, smoothWheel: true });
+  if (!reduced && window.Lenis && M.enabled && M.smoothScroll) {
+    lenis = new Lenis({ lerp: M.scrollLerp, wheelMultiplier: 1, smoothWheel: true });
     const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
   }
   const headerH = () => $(".site-header").offsetHeight;
   function scrollToTarget(target) {
     if (lenis) {
-      lenis.scrollTo(target, { offset: target === 0 ? 0 : -headerH() + 1, duration: 1.4, easing: (x) => 1 - Math.pow(1 - x, 4) });
+      lenis.scrollTo(target, { offset: target === 0 ? 0 : -headerH() + 1, duration: Math.max(0.01, M.anchorDuration), easing: (x) => 1 - Math.pow(1 - x, 4) });
     } else if (target === 0) {
       scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
     } else {
@@ -85,7 +93,7 @@
     scrollToTarget(el);
     history.replaceState(null, "", id);
     // Move focus to the section for keyboard/screen-reader users (after the scroll settles)
-    if (el !== 0) setTimeout(() => { el.setAttribute("tabindex", "-1"); el.focus({ preventScroll: true }); }, lenis ? 1400 : 600);
+    if (el !== 0) setTimeout(() => { el.setAttribute("tabindex", "-1"); el.focus({ preventScroll: true }); }, lenis ? M.anchorDuration * 1000 : 600);
   }));
   $(".to-top").addEventListener("click", () => { scrollToTarget(0); $(".brand").focus({ preventScroll: true }); });
 
@@ -121,7 +129,7 @@
     const chunk = words.map((w) => `<span>${w}</span>`).join("");
     track.innerHTML = chunk + chunk + chunk;
   }
-  if (motion) {
+  if (motion && M.marquee) {
     // Scroll-linked (not autoplaying), eased with an animatable for a soft lag
     const track = $(".marquee-track");
     const mq = createAnimatable(track, { x: 900, ease: "out(3)" });
@@ -131,7 +139,7 @@
       if (y !== last) {
         last = y;
         const third = track.scrollWidth / 3 || 1;
-        mq.x(-((y * 0.45) % third));
+        mq.x(-((y * M.marqueeSpeed) % third));
       }
       requestAnimationFrame(tick);
     };
@@ -180,14 +188,14 @@
     if (type === "split") {
       const words = splitWords(el);
       el.style.opacity = 1;
-      animate(words, { y: ["110%", "0%"], rotate: [6, 0], duration: 1100, delay: stagger(70), ease: "outExpo",
+      animate(words, { y: ["110%", "0%"], rotate: [6, 0], duration: M.revealDuration, delay: stagger(M.revealStagger), ease: "outExpo",
         // Drop the masks once revealed so nothing stays clipped
         onComplete: () => $$(".w-mask", el).forEach((m) => { m.style.overflow = "visible"; }) });
     } else if (type === "stagger") {
       el.style.opacity = 1;
-      animate([...el.children], { opacity: [0, 1], y: [36, 0], duration: 900, delay: stagger(70), ease: "outExpo" });
+      animate([...el.children], { opacity: [0, 1], y: [M.revealDistance * 0.75, 0], duration: M.revealDuration * 0.82, delay: stagger(M.revealStagger), ease: "outExpo" });
     } else {
-      animate(el, { opacity: [0, 1], y: [48, 0], duration: 1100, ease: "outExpo" });
+      animate(el, { opacity: [0, 1], y: [M.revealDistance, 0], duration: M.revealDuration, ease: "outExpo" });
     }
   }
   function setupReveals() {
@@ -209,7 +217,7 @@
     const h1Lines = $$(".hero h1 .line");
     const chars = h1Lines.flatMap(splitChars);
     if (!motion) {
-      loader.hidden = true;
+      if (loader) loader.hidden = true;
       return Promise.resolve();
     }
     utils.set(chars, { y: "110%" });
@@ -225,12 +233,13 @@
     const count = $(".loader-count");
     return new Promise((resolve) => {
       const tl = createTimeline({ defaults: { ease: "outExpo" }, onComplete: resolve });
-      tl.add(".loader-logo", { scale: [0, 1], rotate: [-180, 0], duration: 900, ease: spring(160, 11) })
+      // The loader can be switched off in the panel (it is then not in the page at all)
+      if (loader) tl.add(".loader-logo", { scale: [0, 1], rotate: [-180, 0], duration: 900, ease: spring(160, 11) })
         .add(counter, { v: 100, duration: 900, ease: "inOutQuad", modifier: Math.round, onUpdate: () => { count.textContent = counter.v; } }, "<<")
         .add(".loader-logo", { scale: [1, 22], opacity: [1, 0], duration: 700, ease: "inExpo" })
-        .add(loader, { opacity: [1, 0], duration: 350, ease: "linear", onComplete: () => { loader.hidden = true; } }, "-=250")
-        .add(chars, { y: ["110%", "0%"], rotate: [8, 0], duration: 1100, delay: stagger(28),
-          onComplete: () => h1Lines.forEach((l) => { l.style.overflow = "visible"; }) }, "-=200")
+        .add(loader, { opacity: [1, 0], duration: 350, ease: "linear", onComplete: () => { loader.hidden = true; } }, "-=250");
+      tl.add(chars, { y: ["110%", "0%"], rotate: [8, 0], duration: 1100, delay: stagger(28),
+          onComplete: () => h1Lines.forEach((l) => { l.style.overflow = "visible"; }) }, loader ? "-=200" : 0)
         .add(".hero-mascot", { opacity: [0, 1], scale: [0, 1], rotate: [-90, 0], duration: 900, ease: spring(170, 10) }, "-=800");
       // Works pop out of the head one after another, fading in as they travel
       pops.forEach(({ el, dx, dy }, i) => tl.add(el, {
@@ -243,9 +252,10 @@
   }
 
   /* ---------------------------------------------------------- click burst */
-  const BURST_COLORS = ["#F5F3EE", "#FF3B3B", "#2FC9FF", "#FFD23F"];
+  const BC = CFG.colors || {};
+  const BURST_COLORS = [BC.ink || "#F5F3EE", BC.accent || "#FF3B3B", BC.sky || "#2FC9FF", BC.sun || "#FFD23F"];
   function burst(x, y, n = 12) {
-    if (!motion) return;
+    if (!motion || !M.burst || n < 1) return;
     const parts = Array.from({ length: n }, (_, i) => {
       const p = document.createElement("span");
       p.className = "burst";
@@ -265,7 +275,7 @@
   document.addEventListener("click", (e) => {
     const el = e.target.closest(".btn, .copy, .lang button, .hero-mascot, .arrows button, .lb-btn, .more button, .chip");
     if (!el || e.detail === 0) return; // detail 0 = keyboard activation, keep it calm
-    burst(e.clientX, e.clientY, el.matches(".hero-mascot") ? 18 : 10);
+    burst(e.clientX, e.clientY, Math.round(M.burstCount * (el.matches(".hero-mascot") ? 1.8 : 1)));
     if (motion) animate(el, { scale: [{ to: .92, duration: 90 }, { to: 1, ease: spring(300, 9) }] });
   });
 
@@ -285,12 +295,12 @@
   // The cursor itself is plain CSS (KAPLAY pixel cursors, see style.css)
   if (motion && finePointer) {
     // Magnetic buttons
-    $$(".btn, .hero-mascot, .arrows button, .copy, .to-top").forEach((el) => {
+    if (M.magnetic) $$(".btn, .hero-mascot, .arrows button, .copy, .to-top").forEach((el) => {
       const mag = createAnimatable(el, { x: 600, y: 600, ease: "out(4)" });
       el.addEventListener("pointermove", (e) => {
         const r = el.getBoundingClientRect();
-        mag.x((e.clientX - (r.left + r.width / 2)) * 0.28);
-        mag.y((e.clientY - (r.top + r.height / 2)) * 0.35);
+        mag.x((e.clientX - (r.left + r.width / 2)) * M.magnetStrength * 0.93);
+        mag.y((e.clientY - (r.top + r.height / 2)) * M.magnetStrength * 1.17);
       });
       el.addEventListener("pointerleave", () => { mag.x(0); mag.y(0); });
     });
@@ -381,7 +391,7 @@
     });
 
     // Entrance: slides cascade in the first time the carousel is seen
-    if (motion) {
+    if (motion && M.carouselEntrance) {
       utils.set(slides, { opacity: 0, x: 80 });
       const io = new IntersectionObserver(([en]) => {
         if (!en.isIntersecting) return;
@@ -712,7 +722,7 @@
   /* ------------------------------------------------------------------ boot */
   $$("[data-year]").forEach((n) => { n.textContent = new Date().getFullYear(); });
   let saved = "pt";
-  try { saved = localStorage.getItem("lang") || (navigator.language || "").slice(0, 2); } catch (e) { /* ignore */ }
+  try { saved = (CFG.preview && CFG.lang) || localStorage.getItem("lang") || (navigator.language || "").slice(0, 2); } catch (e) { /* ignore */ }
   setLang(I18N[saved] ? saved : "pt");
   $$("[data-carousel]").forEach(setupCarousel);
   intro().then(() => { setupReveals(); openFromHash(); });

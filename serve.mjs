@@ -4,7 +4,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 
-const root = path.resolve(process.argv[2] || ".");
+const root = path.resolve(process.argv[2] || "public");
 const port = Number(process.argv[3] || 8080);
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",

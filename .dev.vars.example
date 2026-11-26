@@ -1,0 +1,11 @@
+# Copie para .dev.vars (não vai para o Git) para rodar o painel localmente com `npm run dev`.
+ADMIN_PASSWORD=troque-esta-senha-de-teste
+SESSION_SECRET=gere-um-texto-aleatorio-com-pelo-menos-32-caracteres
+# Opcional — verificação em 2 etapas (gere com: node scripts/totp-setup.mjs)
+# ADMIN_TOTP_SECRET=
+# Opcional — Cloudflare Turnstile (chaves de teste que sempre passam: 1x00000000000000000000AA / 1x0000000000000000000000000000000AA)
+# TURNSTILE_SITE_KEY=
+# TURNSTILE_SECRET=
+# Opcional — conferência do token do Cloudflare Access (só funciona atrás do Access de verdade)
+# ACCESS_TEAM_DOMAIN=supertidesign.cloudflareaccess.com
+# ACCESS_AUD=
