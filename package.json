@@ -6,8 +6,8 @@
     "build": "node build.mjs",
     "db:local": "wrangler d1 execute supertidesign --local --file=schema.sql",
     "db:remote": "wrangler d1 execute supertidesign --remote --file=schema.sql",
-    "dev": "node build.mjs && wrangler pages dev --port 8788",
-    "deploy": "node build.mjs && wrangler pages deploy"
+    "dev": "node build.mjs && wrangler dev --port 8788",
+    "deploy": "node build.mjs && wrangler deploy"
   },
   "devDependencies": {
     "wrangler": "^4.168.0"

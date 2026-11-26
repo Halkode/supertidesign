@@ -1,4 +1,4 @@
-// Content access + rendering on the server (Pages Functions)
+// Content access + rendering on the server (routes in functions/)
 import { renderSite } from "../public/shared/render.js";
 import defaults from "../content/default.json";
 import staticMeta from "../public/assets/img/meta.json";

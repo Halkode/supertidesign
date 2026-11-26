@@ -1,4 +1,4 @@
-# Cloudflare Pages: cabeçalhos dos arquivos estáticos (as Functions definem os seus).
+# Cabeçalhos dos arquivos estáticos (as rotas em functions/ definem os seus).
 
 # Painel. A CSP limita de onde vêm scripts, estilos, fontes e frames, e impede que o painel seja
 # embutido em outro site. A prévia (iframe srcdoc) herda esta política, por isso ela também
