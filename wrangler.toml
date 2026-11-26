@@ -8,7 +8,7 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "supertidesign"
-database_id = "00000000-0000-0000-0000-000000000000" # troque pelo id de `wrangler d1 create supertidesign`
+database_id = "5c5c665c-0292-4e2f-b2fb-17b31b84d741" # troque pelo id de `wrangler d1 create supertidesign`
 
 # Bucket R2: fotos, fontes e PDFs enviados pelo painel (servidos em /media/...)
 [[r2_buckets]]
