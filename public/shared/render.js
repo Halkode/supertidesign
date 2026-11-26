@@ -31,7 +31,9 @@ const slug = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9-]/g, "").sli
 const jsonScript = (o) => JSON.stringify(o).replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
 
 /* --------------------------------------------------------------- defaults */
-export const DEFAULT_COLORS = { bg: "#2748D0", bgDeep: "#1A2F8F", surface: "#2140B8", tint: "#3A5BE0", ink: "#F5F3EE", accent: "#FF3B3B", sky: "#2FC9FF", sun: "#FFD23F" };
+// Swapped for the site's address (https://…) by the server when the page is served
+export const ORIGIN_PLACEHOLDER = "__ORIGIN__";
+export const DEFAULT_COLORS ={ bg: "#2748D0", bgDeep: "#1A2F8F", surface: "#2140B8", tint: "#3A5BE0", ink: "#F5F3EE", accent: "#FF3B3B", sky: "#2FC9FF", sun: "#FFD23F" };
 export const DEFAULT_MOTION = {
   enabled: true, speed: 1, loader: true,
   smoothScroll: true, scrollLerp: 0.1, anchorDuration: 1.4,
@@ -211,7 +213,13 @@ export function renderSite(content, meta = {}, opts = {}) {
     `<a class="btn ghost" href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener">${esc(l.label)} <span class="arrow" aria-hidden="true">↗</span></a>`).join("\n          ");
   const logo = esc(rooted(safeUrl(S.logo, "assets/brand/logo.svg"), root));
   const mascot = esc(rooted(safeUrl(S.mascot, "assets/brand/mascote.svg"), root));
-  const og = S.ogImage && info(S.ogImage) ? info(S.ogImage).lgSrc : "";
+  // Share card (WhatsApp, LinkedIn…): these sites need an absolute URL, so the server swaps
+  // ORIGIN_PLACEHOLDER for the site's address when it serves the page. Default: a 1200×630 JPG.
+  const origin = opts.origin != null ? String(opts.origin).replace(/\/$/, "") : ORIGIN_PLACEHOLDER;
+  const abs = (u) => (/^https?:\/\//i.test(u) ? u : origin + "/" + String(u).replace(/^\.?\//, ""));
+  const ogPick = S.ogImage && info(S.ogImage);
+  const og = esc(abs(ogPick ? ogPick.lgSrc : "assets/brand/og-cover.jpg"));
+  const ogSize = ogPick ? (ogPick.lgW && ogPick.lgH ? [ogPick.lgW, ogPick.lgH] : null) : [1200, 630];
   const banner = C.banner && info(C.banner.src) ? C.banner : null;
   const portrait = C.portrait && info(C.portrait.src) ? C.portrait : null;
   const contactArt = C.contactArt && info(C.contactArt.src) ? C.contactArt : null;
@@ -234,9 +242,17 @@ export function renderSite(content, meta = {}, opts = {}) {
 ${opts.preview ? '<base href="/">\n<meta name="robots" content="noindex">\n' : ""}<title>${tr("doc.title", S.name)}</title>
 <meta name="description" content="${tr("doc.description")}">
 <meta name="theme-color" content="${theme.colors.bg}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${name}">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="${esc(origin)}/">
 <meta property="og:title" content="${tr("doc.title", S.name)}">
 <meta property="og:description" content="${tr("doc.description")}">
-${og ? `<meta property="og:image" content="${og}">\n` : ""}<link rel="icon" href="${logo}"${/\.svg$/i.test(logo) ? ' type="image/svg+xml"' : ""}>
+<meta property="og:image" content="${og}">
+${ogSize ? `<meta property="og:image:width" content="${ogSize[0]}">\n<meta property="og:image:height" content="${ogSize[1]}">\n` : ""}<meta property="og:image:alt" content="${name}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${og}">
+<link rel="icon" href="${logo}"${/\.svg$/i.test(logo) ? ' type="image/svg+xml"' : ""}>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap">

@@ -10,7 +10,18 @@ const SECURITY = {
   "x-frame-options": "SAMEORIGIN",
 };
 
-export async function onRequestGet({ env, request, next }) {
+// Static fallback (public/index.html): same placeholders, filled here
+async function fallback(request, next) {
+  const res = await next();
+  if (!res.ok || !(res.headers.get("content-type") || "").includes("text/html")) return res;
+  const out = new Response(finalize(await res.text(), new URL(request.url).origin), res);
+  out.headers.delete("content-length");
+  return out;
+}
+
+export async function onRequestGet(ctx) {
+  const { env, request } = ctx;
+  const next = () => fallback(request, ctx.next);
   if (!env.DB) return next();
   let row;
   try {
@@ -22,5 +33,5 @@ export async function onRequestGet({ env, request, next }) {
   const etag = `"v${row.id}-${ASSET_V}"`;
   const headers = { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache", etag, ...SECURITY };
   if (request.headers.get("if-none-match") === etag) return new Response(null, { status: 304, headers });
-  return new Response(finalize(row.html), { headers });
+  return new Response(finalize(row.html, new URL(request.url).origin), { headers });
 }

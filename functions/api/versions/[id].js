@@ -6,13 +6,13 @@ import { audit } from "../../../server/auth.js";
 
 const getId = (params) => (/^\d+$/.test(params.id) ? Number(params.id) : null);
 
-export async function onRequestGet({ env, params }) {
+export async function onRequestGet({ env, params, request }) {
   const missing = needBindings(env, "DB");
   if (missing) return missing;
   const id = getId(params);
   const row = id && await env.DB.prepare("SELECT html FROM versions WHERE id = ?").bind(id).first();
   if (!row) return fail(404, "Versão não encontrada.");
-  const html = finalize(row.html).replace("<head>", '<head>\n<base href="/">\n<meta name="robots" content="noindex">');
+  const html = finalize(row.html, new URL(request.url).origin).replace("<head>", '<head>\n<base href="/">\n<meta name="robots" content="noindex">');
   return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
 }
 
