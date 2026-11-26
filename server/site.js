@@ -1,5 +1,5 @@
 // Content access + rendering on the server (routes in functions/)
-import { renderSite } from "../public/shared/render.js";
+import { ORIGIN_PLACEHOLDER, renderSite } from "../public/shared/render.js";
 import defaults from "../content/default.json";
 import staticMeta from "../public/assets/img/meta.json";
 import { ASSET_V } from "./version.js";
@@ -27,4 +27,5 @@ export async function render(env, content, { preview = false } = {}) {
   return renderSite(content, meta, { assetV: V_PLACEHOLDER, preview });
 }
 
-export const finalize = (html) => html.split(V_PLACEHOLDER).join(ASSET_V);
+// Fills the placeholders: css/js version and the site address (absolute URLs for the share card)
+export const finalize = (html, origin = "") => html.split(V_PLACEHOLDER).join(ASSET_V).split(ORIGIN_PLACEHOLDER).join(origin);
