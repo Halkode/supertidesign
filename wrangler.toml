@@ -1,14 +1,23 @@
-# Cloudflare Pages: site estático em public/ + Pages Functions em functions/ (API do painel).
-# Veja o README, seção "Painel (CMS)", para criar o banco e o bucket e preencher os ids abaixo.
+# Cloudflare Workers: o Worker (worker.js) serve a página publicada, o painel e a API;
+# os arquivos de public/ são servidos como estáticos.
 name = "supertidesign"
+main = "worker.js"
 compatibility_date = "2025-09-01"
-pages_build_output_dir = "public"
 
-# Banco D1: rascunho, versões publicadas e lista de mídias enviadas
+[assets]
+directory = "public"
+binding = "ASSETS"
+# Só estes caminhos passam pelo Worker; css, js e imagens saem direto dos estáticos.
+run_worker_first = ["/", "/api/*", "/admin", "/admin/*", "/media/*"]
+
+[observability]
+enabled = true
+
+# Banco D1: rascunho, versões publicadas, lista de mídias, sessões e registro de acessos
 [[d1_databases]]
 binding = "DB"
 database_name = "supertidesign"
-database_id = "5c5c665c-0292-4e2f-b2fb-17b31b84d741" # troque pelo id de `wrangler d1 create supertidesign`
+database_id = "5c5c665c-0292-4e2f-b2fb-17b31b84d741"
 
 # Bucket R2: fotos, fontes e PDFs enviados pelo painel (servidos em /media/...)
 [[r2_buckets]]
@@ -16,5 +25,5 @@ binding = "MEDIA"
 bucket_name = "supertidesign-media"
 
 # Segredos (não ficam aqui): ADMIN_PASSWORD e SESSION_SECRET
-#   produção:  Cloudflare → Pages → supertidesign → Settings → Variables and Secrets
+#   produção:  Cloudflare → Workers & Pages → supertidesign → Settings → Variables and Secrets
 #   local:     arquivo .dev.vars (veja .dev.vars.example)

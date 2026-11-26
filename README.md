@@ -2,7 +2,7 @@
 
 Site-portfólio de **Guilherme Eccel Superti**: designer, ilustrador, artista 3D e editor de vídeo.
 
-É uma página única, em três idiomas (PT, EN e JA). As animações usam [anime.js 4](https://animejs.com) e a rolagem suave usa [Lenis](https://github.com/darkroomengineering/lenis). O site fica hospedado no **Cloudflare Pages** e tem um **painel próprio** em `/admin`. Pelo painel dá para trocar cores, fontes, textos, imagens e o tempo das animações, sem mexer em código.
+É uma página única, em três idiomas (PT, EN e JA). As animações usam [anime.js 4](https://animejs.com) e a rolagem suave usa [Lenis](https://github.com/darkroomengineering/lenis). O site fica hospedado no **Cloudflare Workers** (com arquivos estáticos) e tem um **painel próprio** em `/admin`. Pelo painel dá para trocar cores, fontes, textos, imagens e o tempo das animações, sem mexer em código.
 
 ## Como funciona
 
@@ -11,7 +11,7 @@ O site é desenhado por `public/shared/render.js` a partir de um único document
 | Onde | Para quê |
 |---|---|
 | `build.mjs` (Node) | Gera `public/index.html`, a versão estática de reserva. |
-| Pages Functions (`functions/`) | Geram a página na hora de **Publicar** no painel. |
+| Worker (`worker.js` + `functions/`) | Gera a página na hora de **Publicar** no painel e serve a API. |
 | Painel (`public/admin/`) | Mostra a prévia ao vivo. |
 
 ```
@@ -30,7 +30,14 @@ Visitante ── GET / ──▶ functions/index.js ─┘  (sem versão publica
 
 ## Configurar no Cloudflare (uma vez)
 
-Faça estes passos **antes** do merge na `main`. O `wrangler.toml` precisa ter o id real do banco, senão o deploy falha.
+O deploy é automático: a cada commit na `main`, a Cloudflare roda `npx wrangler deploy`. O `wrangler.toml` precisa ter o id real do banco D1 e o bucket R2 precisa existir, senão o deploy falha.
+
+Pelo painel da Cloudflare (sem terminal):
+
+1. **Storage & Databases → D1 → Create database**, com o nome `supertidesign`. Copie o *Database ID* para o `database_id` do `wrangler.toml`. Na aba **Console** do banco, cole o conteúdo de `schema.sql` e execute (cria as tabelas).
+2. **R2 Object Storage → Create bucket**, com o nome `supertidesign-media` (digite o nome; colar pode trazer caracteres invisíveis).
+
+Ou pelo terminal:
 
 ```bash
 npm install
@@ -42,10 +49,10 @@ npm run db:remote                            # cria as tabelas (schema.sql)
 
 Depois, no painel da Cloudflare:
 
-1. **Pages → projeto do site → Settings → Variables and Secrets.** Crie dois segredos para *Production* e *Preview*:
+1. **Workers & Pages → supertidesign → Settings → Variables and Secrets.** Crie dois segredos (tipo *Secret*):
    - `ADMIN_PASSWORD`: a senha do painel, com **12 caracteres ou mais** (uma frase é mais fácil de lembrar e mais forte);
    - `SESSION_SECRET`: um texto aleatório de 32 caracteres ou mais. Para gerar um: `node -e "console.log(crypto.randomBytes(32).toString('hex'))"`.
-2. **Build:** se o projeto estiver ligado ao GitHub, não precisa de comando de build. A pasta publicada (`public`) e as ligações com D1 e R2 já vêm do `wrangler.toml`.
+2. **Build:** o comando de deploy é `npx wrangler deploy` e não precisa de comando de build. O `public/index.html` já vai pronto no repositório; a pasta publicada (`public`) e as ligações com D1 e R2 vêm do `wrangler.toml`.
 3. Faça o deploy, abra `https://SEU-SITE/admin` e entre com a senha.
 4. **Recomendado:** ative a verificação em 2 etapas. Os passos estão logo abaixo.
 
@@ -68,16 +75,16 @@ Camadas opcionais, da mais simples para a mais forte:
 
 1. **Verificação em 2 etapas (recomendado).** Rode `node scripts/totp-setup.mjs`. Adicione a CHAVE no app autenticador do celular (Google Authenticator, Microsoft Authenticator, Authy…) e crie o segredo `ADMIN_TOTP_SECRET` com ela no Cloudflare. A partir daí o login pede o código de 6 dígitos, e cada código só vale uma vez. Guarde a chave num lugar seguro: ela é o backup se o celular for perdido.
 2. **Cloudflare Turnstile** (captcha gratuito, quase sempre invisível).
-   1. Em *Cloudflare → Turnstile → Add widget*, dê um nome e cadastre os hostnames do site (o `*.pages.dev` e o domínio próprio, se houver). Escolha o modo *Managed*.
-   2. No projeto do Pages, em *Settings → Variables and Secrets*, crie dois **Secrets** (Production e Preview): `TURNSTILE_SITE_KEY` com a Site Key e `TURNSTILE_SECRET` com a Secret Key.
+   1. Em *Cloudflare → Turnstile → Add widget*, dê um nome e cadastre os hostnames do site (o `*.workers.dev` e o domínio próprio, se houver). Escolha o modo *Managed*.
+   2. No Worker, em *Settings → Variables and Secrets*, crie dois **Secrets**: `TURNSTILE_SITE_KEY` com a Site Key e `TURNSTILE_SECRET` com a Secret Key.
    3. Faça um novo deploy. A caixinha da Cloudflare aparece no login.
 
    Se o hostname do widget estiver errado, ninguém consegue entrar. Para resolver, corrija o widget ou apague os dois segredos e faça um novo deploy.
 3. **Cloudflare Access** (Zero Trust, grátis até 50 pessoas).
    1. No painel da Cloudflare, abra *Zero Trust*, escolha o nome da equipe (por exemplo, `supertidesign`) e o plano Free. Em *Settings → Authentication*, deixe o **One-time PIN** ativo (código por e-mail).
    2. Em *Access → Applications → Add an application → Self-hosted*, crie uma aplicação com os destinos `SEU-DOMÍNIO/admin` e `SEU-DOMÍNIO/api`. Não proteja `/` nem `/media`, que são o site público. Adicione uma política **Allow** com *Include → Emails*: o e-mail do Guilherme e o de quem dá manutenção.
-   3. **Proteja também as URLs de preview.** Em *Pages → Settings → General → Access policy*, clique em *Enable*. Os previews usam o mesmo banco de dados.
-   4. **Ligue a conferência no servidor.** Copie o *Application Audience (AUD) Tag* da aplicação, que fica em *Overview* / *Basic information*. No projeto do Pages, crie as variáveis `ACCESS_TEAM_DOMAIN` (ex.: `supertidesign.cloudflareaccess.com`) e `ACCESS_AUD` (a tag). Faça um novo deploy.
+   3. **Proteja também as URLs de preview.** Em *Workers & Pages → supertidesign → Settings → Domains & Routes*, ative o Cloudflare Access no `workers.dev` e nas *Preview URLs* (ou desative as Preview URLs). Elas usam o mesmo banco de dados.
+   4. **Ligue a conferência no servidor.** Copie o *Application Audience (AUD) Tag* da aplicação, que fica em *Overview* / *Basic information*. No Worker, crie as variáveis `ACCESS_TEAM_DOMAIN` (ex.: `supertidesign.cloudflareaccess.com`) e `ACCESS_AUD` (a tag). Faça um novo deploy.
 
    Com isso, além do bloqueio que o Access faz na borda da Cloudflare, o próprio servidor confere a assinatura do token do Access (RS256, chaves da equipe, audiência, emissor e validade). Qualquer pedido a `/admin` ou `/api` sem token válido é recusado, mesmo que chegue por um endereço esquecido fora da regra. A aba **Segurança** mostra o e-mail que o Access confirmou.
 
@@ -140,8 +147,9 @@ public/                 o que vai para o ar
   shared/render.js      renderizador do site (usado no build, nas Functions e no painel)
   admin/                painel (index.html, app.js, admin.css)
   assets/               logo, mascote, PDFs e imagens WebP (+ meta.json)
-  _headers              cabeçalhos do Cloudflare Pages
-functions/              Pages Functions: GET /, /media/*, /api/* (login, conteúdo, mídia, publicar, versões)
+  _headers              cabeçalhos dos arquivos estáticos
+worker.js               ponto de entrada do Worker: escolhe a rota em functions/ ou entrega o arquivo estático
+functions/              rotas: GET /, /media/*, /api/* (login, conteúdo, mídia, publicar, versões)
 server/                 código compartilhado das Functions (auth, acesso ao D1, versão dos assets)
 content/default.json    conteúdo original (ponto de partida do painel)
 schema.sql              tabelas do D1

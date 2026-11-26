@@ -14,7 +14,9 @@ const content = JSON.parse(read("content/default.json"));
 const meta = JSON.parse(read("public/assets/img/meta.json"));
 
 // Cache busting: one hash for css + js, so browsers fetch the new files whenever they change
-const assetV = crypto.createHash("sha1").update(read("public/css/style.css")).update(read("public/js/main.js")).digest("hex").slice(0, 8);
+// line endings are normalized so the version is the same on Windows (CRLF) and Linux (LF)
+const lf = (f) => read(f).toString("utf8").replace(/\r\n/g, "\n");
+const assetV = crypto.createHash("sha1").update(lf("public/css/style.css")).update(lf("public/js/main.js")).digest("hex").slice(0, 8);
 fs.writeFileSync("server/version.js", `// Gerado pelo build.mjs — não edite à mão.\nexport const ASSET_V = "${assetV}";\n`);
 
 // Background pattern tile: the two heads (logo + mascot) in a 2×2 checker, turned into
