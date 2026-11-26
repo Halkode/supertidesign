@@ -23,7 +23,8 @@ http.createServer((req, res) => {
     if (err || !st.isFile()) { res.writeHead(404, { "content-type": "text/plain" }); return res.end("404"); }
     res.writeHead(200, {
       "content-type": TYPES[path.extname(file).toLowerCase()] || "application/octet-stream",
-      "cache-control": file.endsWith(".html") ? "no-cache" : "public, max-age=3600",
+      // no-cache = always revalidate, so local edits show up on a normal reload
+      "cache-control": "no-cache",
       "x-content-type-options": "nosniff",
     });
     fs.createReadStream(file).pipe(res);
