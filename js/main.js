@@ -76,7 +76,7 @@
       target.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
     }
   }
-  $$('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => {
+  $$('a[href^="#"]:not([data-project])').forEach((a) => a.addEventListener("click", (e) => {
     const id = a.getAttribute("href");
     const el = id === "#top" ? 0 : $(id);
     if (el === null) return;
@@ -213,7 +213,14 @@
       return Promise.resolve();
     }
     utils.set(chars, { y: "110%" });
-    utils.set($$(".hero-row, .hero-mascot, .hero-float img, .scroll-hint"), { opacity: 0 });
+    utils.set($$(".hero-row, .hero-mascot, .pop, .scroll-hint"), { opacity: 0 });
+    // Each card starts tucked inside the mascot's head and fans out to its place
+    const head = $(".hero-mascot").getBoundingClientRect();
+    const hx = head.left + head.width / 2, hy = head.top + head.height * .32;
+    const pops = $$(".pop").map((el) => {
+      const r = el.getBoundingClientRect();
+      return { el, dx: hx - (r.left + r.width / 2), dy: hy - (r.top + r.height / 2) };
+    });
     const counter = { v: 0 };
     const count = $(".loader-count");
     return new Promise((resolve) => {
@@ -224,9 +231,13 @@
         .add(loader, { opacity: [1, 0], duration: 350, ease: "linear", onComplete: () => { loader.hidden = true; } }, "-=250")
         .add(chars, { y: ["110%", "0%"], rotate: [8, 0], duration: 1100, delay: stagger(28),
           onComplete: () => h1Lines.forEach((l) => { l.style.overflow = "visible"; }) }, "-=200")
-        .add(".hero-mascot", { opacity: [0, 1], scale: [0, 1], rotate: [-90, 0], duration: 900, ease: spring(170, 10) }, "-=800")
-        .add(".hero-float img", { opacity: [0, 1], y: [80, 0], duration: 1200, delay: stagger(110) }, "-=900")
-        .add(".hero-row", { opacity: [0, 1], y: [30, 0], duration: 900 }, "-=1000")
+        .add(".hero-mascot", { opacity: [0, 1], scale: [0, 1], rotate: [-90, 0], duration: 900, ease: spring(170, 10) }, "-=800");
+      // Works pop out of the head one after another, fading in as they travel
+      pops.forEach(({ el, dx, dy }, i) => tl.add(el, {
+        x: [dx, 0], y: [dy, 0], scale: [.2, 1], duration: 1300, ease: "outExpo",
+        opacity: { from: 0, to: 1, duration: 700, ease: "outQuad" },
+      }, i === 0 ? "-=450" : "-=1120"));
+      tl.add(".hero-row", { opacity: [0, 1], y: [30, 0], duration: 900 }, "-=1000")
         .add(".scroll-hint", { opacity: [0, .7], duration: 600 }, "-=400");
     });
   }
@@ -270,64 +281,9 @@
     });
   });
 
-  /* ---------------------------------------------- pointer: cursor, magnetic */
+  /* --------------------------------------------------- pointer: magnetic */
+  // The cursor itself is plain CSS (KAPLAY pixel cursors, see style.css)
   if (motion && finePointer) {
-    /* Cursor: a small dot everywhere; over images it becomes an eye that
-       looks toward the movement direction and blinks now and then. */
-    const dot = $(".cursor-dot"), eye = $(".cursor-eye");
-    const look = $(".eye-look", eye), lid = $(".eye-lid", eye);
-    const dotA = createAnimatable(dot, { x: 120, y: 120, ease: "out(2)" });
-    const eyeA = createAnimatable(eye, { x: 420, y: 420, ease: "out(3)" });
-    const lookA = createAnimatable(look, { x: 260, y: 260, ease: "out(3)" });
-    let shown = false, eyeOn = false, hoverState = "none", lx = 0, ly = 0, blinkTimer = 0;
-    utils.set(eye, { scale: 0, opacity: 0 }); utils.set(lid, { scaleY: 0 });
-
-    const blink = () => animate(lid, { scaleY: [{ to: 1, duration: 90, ease: "inQuad" }, { to: 0, duration: 170, ease: "outQuad" }] });
-    const scheduleBlink = () => {
-      clearTimeout(blinkTimer);
-      blinkTimer = setTimeout(() => { if (eyeOn) { blink(); scheduleBlink(); } }, utils.random(1600, 3600));
-    };
-    function setEye(on) {
-      if (on === eyeOn) return;
-      eyeOn = on;
-      if (on) {
-        utils.set(lid, { scaleY: 1 });             // arrives with the eye closed…
-        animate(eye, { opacity: 1, scale: [0, 1], duration: 550, ease: spring(220, 14) });
-        animate(lid, { scaleY: 0, delay: 160, duration: 260, ease: "outQuad" }); // …then opens
-        animate(dot, { opacity: 0, duration: 150 });
-        scheduleBlink();
-      } else {
-        clearTimeout(blinkTimer);
-        animate(eye, { opacity: 0, scale: 0, duration: 250, ease: "inQuad" });
-        animate(dot, { opacity: 1, duration: 150 });
-      }
-    }
-    addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse") return;
-      const x = e.clientX, y = e.clientY;
-      dotA.x(x); dotA.y(y); eyeA.x(x); eyeA.y(y);
-      // Pupil looks where the pointer is heading (clamped inside the eye)
-      const dx = x - lx, dy = y - ly; lx = x; ly = y;
-      const len = Math.hypot(dx, dy) || 1, k = Math.min(len * 1.4, 14);
-      lookA.x((dx / len) * k); lookA.y((dy / len) * k * .7);
-      if (!shown) { shown = true; dot.classList.add("on"); utils.set(dot, { opacity: 1 }); }
-      const overImage = !!e.target.closest("[data-cursor]");
-      setEye(overImage);
-      const want = overImage ? "eye" : e.target.closest("a, button, [tabindex='0']") ? "hover" : "none";
-      if (want !== hoverState) {
-        hoverState = want;
-        dot.classList.toggle("ring", want === "hover");
-        if (want !== "eye") animate(dot, { scale: want === "hover" ? 3.2 : 1, duration: 350, ease: "outExpo" });
-      }
-    }, { passive: true });
-    // Pupil re-centres when the pointer rests
-    let restTimer = 0;
-    addEventListener("pointermove", () => { clearTimeout(restTimer); restTimer = setTimeout(() => { lookA.x(0); lookA.y(0); }, 160); }, { passive: true });
-    document.addEventListener("pointerdown", () => { if (eyeOn) blink(); });
-    document.documentElement.addEventListener("pointerleave", () => {
-      shown = false; setEye(false); utils.set([dot, eye], { opacity: 0 });
-    });
-
     // Magnetic buttons
     $$(".btn, .hero-mascot, .arrows button, .copy, .to-top").forEach((el) => {
       const mag = createAnimatable(el, { x: 600, y: 600, ease: "out(4)" });
@@ -339,51 +295,11 @@
       el.addEventListener("pointerleave", () => { mag.x(0); mag.y(0); });
     });
 
-    // Hero floating works react to the pointer (depth parallax)
-    const floats = $$(".hero-float img").map((el, i) => ({ a: createAnimatable(el, { x: 1200, y: 1200, ease: "out(3)" }), d: [22, 40, 14][i] || 20 }));
-    $(".hero").addEventListener("pointermove", (e) => {
-      const cx = e.clientX / innerWidth - .5, cy = e.clientY / innerHeight - .5;
-      floats.forEach(({ a, d }) => { a.x(-cx * d); a.y(-cy * d); });
-    });
-
-    // Portrait 3D tilt
-    const stack = $(".photo-stack");
-    const tilt = createAnimatable(stack, { rotateX: 500, rotateY: 500, ease: "out(3)" });
-    stack.addEventListener("pointermove", (e) => {
-      const r = stack.getBoundingClientRect();
-      tilt.rotateY(((e.clientX - r.left) / r.width - .5) * 14);
-      tilt.rotateX(-((e.clientY - r.top) / r.height - .5) * 14);
-    });
-    stack.addEventListener("pointerleave", () => { tilt.rotateX(0); tilt.rotateY(0); });
-
     // Chips hop on hover
     $$(".chip").forEach((li) => li.addEventListener("pointerenter", () => {
       animate(li, { y: [{ to: -8, duration: 140, ease: "outQuad" }, { to: 0, ease: spring(260, 9) }] });
     }));
   }
-
-  /* -------------------------------------------------------- photo stack */
-  (() => {
-    const stack = $(".photo-stack");
-    let items = $$(".stack-item", stack);
-    const order = () => items.forEach((it, i) => { it.style.zIndex = String(items.length - i); });
-    order();
-    let busy = false;
-    stack.addEventListener("click", () => {
-      if (busy) return;
-      const top = items[0];
-      const finish = () => { items.push(items.shift()); order(); busy = false; };
-      if (!motion) { finish(); return; }
-      busy = true;
-      animate(top, {
-        x: [{ to: "65%", duration: 380, ease: "outQuad" }, { to: 0, duration: 520, ease: spring(150, 14) }],
-        rotate: [{ to: 18, duration: 380, ease: "outQuad" }, { to: () => utils.random(-6, 6), duration: 520 }],
-        scale: [{ to: .92, duration: 380 }, { to: 1, duration: 520 }],
-        onUpdate: (anim) => { if (anim.currentTime > 380 && top.style.zIndex !== "0") top.style.zIndex = "0"; },
-        onComplete: finish,
-      });
-    });
-  })();
 
   /* ------------------------------------------------------------ carousels */
   function setupCarousel(c) {
@@ -674,6 +590,105 @@
     $(".more ul").addEventListener("pointerleave", () => { on = false; animate(pv, { opacity: 0, scale: .6, duration: 300, ease: "outQuad" }); });
   }
 
+  /* ------------------------------------- project grid, filters and window */
+  // Full projects live in .work-store (hidden when JS runs). Opening a card moves its
+  // <article> into the project window and back again on close, so carousels, reveals and
+  // lightbox groups keep working untouched. Links: #trabalhos/<id> (or #<id>) open a project.
+  let openFromHash = () => {};
+  (() => {
+    const pm = $(".project-modal"), store = $(".work-store");
+    if (!pm || !store) return;
+    const body = $(".pm-body", pm), count = $(".pm-count", pm), status = $("[data-filter-status]");
+    const cards = $$("[data-project]");
+    const pad = (n) => String(n).padStart(2, "0");
+    const visibleIds = () => cards.filter((c) => !c.closest("li").hidden).map((c) => c.dataset.project);
+    let current = null, opener = null;
+
+    function mount(id, dir = 0) {
+      const art = document.getElementById(id);
+      if (!art || !store.contains(art) && art !== current) return false;
+      if (current && current !== art) store.appendChild(current);
+      body.appendChild(art); current = art;
+      pm.setAttribute("aria-labelledby", id + "-t");
+      const ids = visibleIds(), i = Math.max(0, ids.indexOf(id));
+      count.textContent = `${pad(i + 1)} / ${pad(ids.length)}`;
+      $$(".track", art).forEach((tr) => tr.scrollTo({ left: 0, behavior: "instant" }));
+      body.scrollTo({ top: 0, behavior: "instant" });
+      history.replaceState(null, "", "#trabalhos/" + id);
+      if (motion && dir) animate(art, { opacity: [0, 1], x: [48 * dir, 0], duration: 550, ease: "outExpo" });
+      return true;
+    }
+    function open(id, from) {
+      if (!mount(id)) return false;
+      opener = from || null;
+      if (!pm.open) { pm.showModal(); syncScrollLock(); }
+      if (motion) animate(body, { opacity: [0, 1], y: [36, 0], duration: 650, ease: "outExpo" });
+      return true;
+    }
+    const step = (d) => {
+      const ids = visibleIds(), i = ids.indexOf(current.id);
+      mount(ids[(i + d + ids.length) % ids.length], d);
+    };
+    cards.forEach((c) => c.addEventListener("click", (e) => { e.preventDefault(); open(c.dataset.project, c); }));
+    $(".pm-prev", pm).addEventListener("click", () => step(-1));
+    $(".pm-next", pm).addEventListener("click", () => step(1));
+    $(".pm-close", pm).addEventListener("click", () => closeTopLayer(pm));
+    pm.addEventListener("cancel", (e) => { e.preventDefault(); closeTopLayer(pm); });
+    pm.addEventListener("click", (e) => { if (e.target === pm) closeTopLayer(pm); }); // backdrop
+    pm.addEventListener("close", () => {
+      if (current) { store.appendChild(current); current = null; }
+      history.replaceState(null, "", "#trabalhos");
+      syncScrollLock();
+      opener && opener.isConnected && opener.focus({ preventScroll: true });
+    });
+
+    openFromHash = () => {
+      const m = location.hash.match(/^#(?:trabalhos\/)?([\w-]+)$/);
+      if (!m || !cards.some((c) => c.dataset.project === m[1])) return;
+      const card = cards.find((c) => c.dataset.project === m[1]);
+      scrollToTarget($("#trabalhos"));
+      open(m[1], card);
+    };
+
+    // Filters: hide the cards that don't match and announce how many remain
+    const filterBtns = $$("[data-filter]");
+    filterBtns.forEach((b) => b.addEventListener("click", () => {
+      const f = b.dataset.filter;
+      filterBtns.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      const items = cards.map((c) => c.closest("li"));
+      items.forEach((li) => { li.hidden = f !== "all" && !li.dataset.tags.split(" ").includes(f); });
+      const shown = items.filter((li) => !li.hidden);
+      status.textContent = `${shown.length} ${t("filter.count")}`;
+      if (motion) animate(shown, { opacity: [0, 1], y: [28, 0], scale: [.96, 1], duration: 650, delay: stagger(45), ease: "outExpo" });
+    }));
+  })();
+
+  /* ------------------------------------- illustrations: "show more" (mobile) */
+  (() => {
+    const btn = $(".gallery-toggle"), gal = $("#gallery");
+    if (!btn || !gal) return;
+    const label = $("[data-i18n]", btn), arrowEl = $(".arrow", btn);
+    btn.addEventListener("click", () => {
+      const open = gal.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+      label.dataset.i18n = open ? "illus.showLess" : "illus.showMore";
+      label.textContent = t(label.dataset.i18n);
+      arrowEl.textContent = open ? "↑" : "↓";
+      if (open && motion) animate($$(":scope > :nth-child(n+7)", gal), { opacity: [0, 1], y: [30, 0], duration: 700, delay: stagger(50), ease: "outExpo" });
+      if (!open) scrollToTarget($("#ilustracoes"));
+    });
+  })();
+
+  /* ------------------------------------------------- floating back-to-top */
+  (() => {
+    const fab = $(".fab-top");
+    if (!fab) return;
+    fab.hidden = false;
+    const sync = () => fab.classList.toggle("on", scrollY > innerHeight * 1.2);
+    addEventListener("scroll", sync, { passive: true }); sync();
+    fab.addEventListener("click", () => { scrollToTarget(0); $(".brand").focus({ preventScroll: true }); });
+  })();
+
   /* ---------------------------------------------------------- copy email */
   const toast = $(".toast");
   function showToast(msg) {
@@ -700,5 +715,5 @@
   try { saved = localStorage.getItem("lang") || (navigator.language || "").slice(0, 2); } catch (e) { /* ignore */ }
   setLang(I18N[saved] ? saved : "pt");
   $$("[data-carousel]").forEach(setupCarousel);
-  intro().then(setupReveals);
+  intro().then(() => { setupReveals(); openFromHash(); });
 })();

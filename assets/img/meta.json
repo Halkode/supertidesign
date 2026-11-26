@@ -1132,5 +1132,54 @@
   "alpha": true,
   "lg": "logos/logo_S_variacao.webp",
   "sm": "logos/logo_S_variacao-sm.webp"
+ },
+ "home/sobre_mim.jpeg": {
+  "w": 1254,
+  "h": 1254,
+  "alpha": false,
+  "lg": "home/sobre_mim.webp",
+  "sm": "home/sobre_mim-sm.webp"
+ },
+ "trabalhos/tanac_1.png": {
+  "w": 1539,
+  "h": 2000,
+  "alpha": false,
+  "lg": "trabalhos/tanac_1.webp",
+  "sm": "trabalhos/tanac_1-sm.webp"
+ },
+ "trabalhos/tanac_2.png": {
+  "w": 1380,
+  "h": 2000,
+  "alpha": false,
+  "lg": "trabalhos/tanac_2.webp",
+  "sm": "trabalhos/tanac_2-sm.webp"
+ },
+ "trabalhos/tanac_3.png": {
+  "w": 1670,
+  "h": 2000,
+  "alpha": false,
+  "lg": "trabalhos/tanac_3.webp",
+  "sm": "trabalhos/tanac_3-sm.webp"
+ },
+ "trabalhos/ipanema_1.png": {
+  "w": 1654,
+  "h": 2000,
+  "alpha": false,
+  "lg": "trabalhos/ipanema_1.webp",
+  "sm": "trabalhos/ipanema_1-sm.webp"
+ },
+ "trabalhos/ipanema_2.png": {
+  "w": 1605,
+  "h": 2000,
+  "alpha": false,
+  "lg": "trabalhos/ipanema_2.webp",
+  "sm": "trabalhos/ipanema_2-sm.webp"
+ },
+ "trabalhos/ipanema_3.png": {
+  "w": 1288,
+  "h": 2000,
+  "alpha": false,
+  "lg": "trabalhos/ipanema_3.webp",
+  "sm": "trabalhos/ipanema_3-sm.webp"
  }
 }
