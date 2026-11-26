@@ -1,0 +1,12 @@
+# Cloudflare Pages: cabeçalhos dos arquivos estáticos
+/admin/*
+  Cache-Control: no-cache
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: same-origin
+
+/shared/*
+  Cache-Control: no-cache
+
+/*
+  X-Content-Type-Options: nosniff

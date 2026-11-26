@@ -1,0 +1,20 @@
+# Cloudflare Pages: site estático em public/ + Pages Functions em functions/ (API do painel).
+# Veja o README, seção "Painel (CMS)", para criar o banco e o bucket e preencher os ids abaixo.
+name = "supertidesign"
+compatibility_date = "2025-09-01"
+pages_build_output_dir = "public"
+
+# Banco D1: rascunho, versões publicadas e lista de mídias enviadas
+[[d1_databases]]
+binding = "DB"
+database_name = "supertidesign"
+database_id = "00000000-0000-0000-0000-000000000000" # troque pelo id de `wrangler d1 create supertidesign`
+
+# Bucket R2: fotos, fontes e PDFs enviados pelo painel (servidos em /media/...)
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "supertidesign-media"
+
+# Segredos (não ficam aqui): ADMIN_PASSWORD e SESSION_SECRET
+#   produção:  Cloudflare → Pages → supertidesign → Settings → Variables and Secrets
+#   local:     arquivo .dev.vars (veja .dev.vars.example)

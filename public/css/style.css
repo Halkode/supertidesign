@@ -21,6 +21,8 @@
   --pad: clamp(1.25rem, 4vw, 3.5rem);
   --radius: 10px;
   --sans: "Plus Jakarta Sans", "Noto Sans JP", system-ui, sans-serif;
+  --display: "Plus Jakarta Sans", system-ui, sans-serif; /* hero name, brand and headings (the panel can swap it) */
+  --sun: #FFD23F;
   --stroke: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 16' preserveAspectRatio='none'%3E%3Cpath fill='%23F5F3EE' d='M0 7.2C80 4.4 160 5.6 240 4.1S400 4.5 480 3.1 640 4.6 720 5.2s160-2.4 240-2.4 160 2.5 240 4.4V8.8c-80 3.1-160 4.2-240 2.8s-160-1.5-240-.7-160 1-240 1.1-160-1.7-240-1.6-160 2.1-240 2.1-80-2.3-240-3.1Z'/%3E%3C/svg%3E");
   color-scheme: light;
 }
@@ -48,7 +50,7 @@ img, svg { display: block; max-width: 100%; }
 img { height: auto; }
 a { color: inherit; }
 button { font: inherit; color: inherit; }
-h1, h2, h3 { font-weight: 800; line-height: 1; letter-spacing: -.035em; text-wrap: balance; }
+h1, h2, h3 { font-family: var(--display), "Noto Sans JP", system-ui, sans-serif; font-weight: 800; line-height: 1; letter-spacing: -.035em; text-wrap: balance; }
 :lang(ja) :is(h1, h2, h3) { font-weight: 900; line-height: 1.3; letter-spacing: 0; }
 p { text-wrap: pretty; }
 ::selection { background: var(--ink); color: var(--bg); }
@@ -107,13 +109,14 @@ html { scrollbar-color: var(--ink) var(--bg-deep); }
    A fixed layer under every section (sections use translucent fills so it shows through).
    The inner layer is one tile larger than the viewport and slides one tile down-left, then
    loops: only `transform` animates, so it stays on the compositor. */
-.bg-pattern { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: .07; }
+.bg-pattern { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: var(--pattern-opacity, .07); }
+.no-pattern .bg-pattern { display: none; }
 .bg-pattern div {
   position: absolute; top: -320px; left: 0; right: -320px; bottom: 0;
   background: url("../assets/brand/pattern.svg") 0 0 / 320px 320px repeat;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .bg-pattern div { animation: pattern-fall 36s linear infinite; }
+  .bg-pattern div { animation: pattern-fall var(--pattern-duration, 36s) linear infinite; }
 }
 @keyframes pattern-fall { to { transform: translate3d(-320px, 320px, 0); } }
 
@@ -231,8 +234,8 @@ html { scrollbar-color: var(--ink) var(--bg-deep); }
 .hero-title { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: clamp(1rem, 2.4vw, 2rem); }
 .hero h1 { font-size: clamp(3rem, 11vw, 10.5rem); line-height: .9; letter-spacing: -.055em; }
 /* The name is Latin in every language: same typography in PT, EN and JA (beats `:lang(ja) h1`) */
-.hero h1, .hero h1 .line { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 800; font-feature-settings: normal; }
-.brand-name { font-family: "Plus Jakarta Sans", system-ui, sans-serif; letter-spacing: -.02em; }
+.hero h1, .hero h1 .line { font-family: var(--display); font-weight: 800; font-feature-settings: normal; }
+.brand-name { font-family: var(--display); letter-spacing: -.02em; }
 /* Clip box gets breathing room so tight letter-spacing never shaves glyph edges */
 .hero h1 .line { display: block; overflow: clip; padding: 0 .12em .08em; margin: 0 -.12em; }
 .hero h1 .char { display: inline-block; will-change: transform; }
@@ -255,7 +258,7 @@ html { scrollbar-color: var(--ink) var(--bg-deep); }
 }
 /* Breathing: a slow rise and swell, each card out of phase */
 @media (prefers-reduced-motion: no-preference) {
-  .pop img { animation: breathe 5.4s ease-in-out infinite; }
+  html:not(.no-breathe) .pop img { animation: breathe 5.4s ease-in-out infinite; }
   .pop:nth-child(2) img { animation-delay: -1.8s; }
   .pop:nth-child(3) img { animation-delay: -3.6s; }
 }
@@ -726,11 +729,11 @@ section { padding: clamp(4.5rem, 10vw, 9rem) var(--pad); }
    images that open the lightbox. Each falls back to the matching system cursor. !important: many components set
    `cursor: pointer` with class selectors, and the pixel cursors must win everywhere. */
 @media (hover: hover) and (pointer: fine) {
-  html, body { cursor: url("../assets/brand/kaplay/cursor.png") 2 3, auto !important; }
-  a, button, label, summary, select, [role="button"] { cursor: url("../assets/brand/kaplay/pointer.png") 5 0, pointer !important; }
-  .track { cursor: url("../assets/brand/kaplay/grab.png") 10 11, grab !important; }
-  .track.dragging, .track.dragging * { cursor: url("../assets/brand/kaplay/grab.png") 10 11, grabbing !important; }
-  [data-cursor="view"], .slide button, .gallery button, .skill-item {
+  html:not(.no-pixel-cursor), html:not(.no-pixel-cursor) body { cursor: url("../assets/brand/kaplay/cursor.png") 2 3, auto !important; }
+  :is(a, button, label, summary, select, [role="button"]):where(html:not(.no-pixel-cursor) *) { cursor: url("../assets/brand/kaplay/pointer.png") 5 0, pointer !important; }
+  :is(.track):where(html:not(.no-pixel-cursor) *) { cursor: url("../assets/brand/kaplay/grab.png") 10 11, grab !important; }
+  :is(.track.dragging, .track.dragging *):where(html:not(.no-pixel-cursor) *) { cursor: url("../assets/brand/kaplay/grab.png") 10 11, grabbing !important; }
+  :is([data-cursor="view"], .slide button, .gallery button, .skill-item):where(html:not(.no-pixel-cursor) *) {
     cursor: url("../assets/brand/kaplay/search-32.png") 14 13, zoom-in !important;
     cursor: image-set(url("../assets/brand/kaplay/search-32.png") 1x, url("../assets/brand/kaplay/search-64.png") 2x) 14 13, zoom-in !important;
   }
