@@ -10,8 +10,18 @@ binding = "ASSETS"
 # Só estes caminhos passam pelo Worker; css, js e imagens saem direto dos estáticos.
 run_worker_first = ["/", "/api/*", "/admin", "/admin/*", "/media/*"]
 
-[observability]
+# Logs e rastreamento: igual ao que está no painel da Cloudflare (Settings → Observability),
+# senão cada deploy sobrescreve o que foi configurado lá.
+[observability.logs]
 enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
+
+[observability.traces]
+enabled = false
+head_sampling_rate = 1
+persist = true
 
 # Banco D1: rascunho, versões publicadas, lista de mídias, sessões e registro de acessos
 [[d1_databases]]
